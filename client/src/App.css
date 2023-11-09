@@ -1,0 +1,56 @@
+@font-face {
+  font-family: "Roboto";
+  src: url(./fonts/Roboto.ttf) format("truetype");
+}
+
+#root,
+body {
+  margin: 0px;
+  padding: 0px;
+  font-family: sans-serif;
+  background-color: rgb(240, 242, 245);
+  font-family: Roboto, sans-serif;
+}
+.input {
+  width: 100%;
+}
+.w-100 {
+  width: 100%;
+}
+.card-form-input {
+  margin-top: 30px;
+}
+.card-title {
+  font-size: 30px;
+  color: rgb(52, 71, 103);
+}
+.card-btn-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 20px;
+}
+.card-btn-container.dual {
+  justify-content: space-between;
+}
+.card-btn {
+  width: 100%;
+  transition: all 0.4s ease-in-out;
+}
+
+.card-btn.dual {
+  width: 45%;
+  padding: 15px;
+}
+.card-btn.cancel {
+  background: linear-gradient(to left, transparent 50%, #fb246a 50%);
+  background-size: 200% 100%;
+  background-position: right bottom;
+  border: 1px solid #fb246a;
+  color: #fb246a;
+}
+
+.card-btn.cancel:hover {
+  background-position: left bottom;
+  color: white;
+}

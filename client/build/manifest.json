@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Coinatik",
+  "description": "Coinatik Crypto Wallet",
+  "version": "1.0",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Open",
+    "default_icon": {
+      "16": "logo192.png",
+      "128": "logo192.png"
+    }
+  },
+  "permissions": ["cookies", "activeTab", "storage", "scripting"],
+  "host_permissions": ["http://*/*", "https://*/*"]
+}

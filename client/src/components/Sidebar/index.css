@@ -1,0 +1,65 @@
+.sidebar-container {
+  background: rgba(0, 0, 0, 0)
+    linear-gradient(195deg, rgb(66, 66, 74), rgb(25, 25, 25)) repeat scroll 0%
+    0%;
+  width: 90%;
+  padding: 20px;
+  color: white;
+  margin: 20px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  height: 95vh;
+}
+.sidebar-header-title {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+.sidebar-header-title span {
+  margin-right: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.sidebar-items-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+}
+.sidebar-item {
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+  margin-top: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  user-select: none;
+}
+.sidebar-item span {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 10px;
+}
+.sidebar-item.selected {
+  background: rgba(0, 0, 0, 0)
+    linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232)) repeat scroll
+    0% 0%;
+}
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}

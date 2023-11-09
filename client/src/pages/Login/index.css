@@ -1,0 +1,127 @@
+.login-container {
+  background-color: rgb(240, 242, 245);
+  min-height: 100vh;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+.login-content {
+  width: 100vw;
+  height: 100vh;
+  opacity: 1;
+  background-color: transparent;
+  background-attachment: scroll;
+  background-origin: padding-box;
+  background-clip: border-box;
+  color: rgb(52, 71, 103);
+  box-shadow: none;
+  background-image: linear-gradient(
+      195deg,
+      rgba(66, 66, 74, 0.4),
+      rgba(25, 25, 25, 0.4)
+    ),
+    url("../../assets/loginBackground.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.login-card {
+  background-color: white;
+  width: max-content;
+  padding: 20px;
+  width: 25%;
+  border-radius: 10px;
+  position: relative;
+  box-sizing: border-box;
+}
+.login-card-body {
+  position: relative;
+  top: -40px;
+}
+.login-form-item {
+  width: 100%;
+  margin-top: 20px;
+}
+.login-header {
+  background: rgba(0, 0, 0, 0)
+    linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232)) repeat scroll
+    0% 0%;
+  color: white;
+  box-shadow: rgba(0, 0, 0, 0.14) 0rem 0.25rem 1.25rem 0rem,
+    rgba(76, 175, 79, 0.4) 0rem 0.4375rem 0.625rem -0.3125rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 10px;
+  border-radius: 0.5vw;
+  position: relative;
+  top: -45px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.login-header-title {
+  font-size: 1.5vw;
+}
+.login-header-desc {
+  font-size: 0.8vw;
+  margin-top: 10px;
+}
+.login-btn-container {
+  margin-top: 30px;
+}
+.login-btn {
+  padding: 15px ;
+  background: rgba(0, 0, 0, 0)
+    linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232)) repeat scroll
+    0% 0%;
+}
+.login-accordian-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 60px;
+}
+.login-accordian {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 300px;
+  background-color: rgb(240, 242, 245);
+  border-radius: 20px;
+}
+
+.login-accordina-item {
+  width: 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.login-accordina-item.selected {
+  background: rgba(0, 0, 0, 0)
+    linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232)) repeat scroll
+    0% 0%;
+  color: white;
+}
+
+.google-image {
+  width: 20px;
+}
+.google-btn {
+  background-color: transparent ;
+  border: 1px solid whitesmoke ;
+  color: color(srgb red green blue);
+  padding: 15px ;
+  color: black;
+}
