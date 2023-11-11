@@ -16,7 +16,16 @@ const isAuthManagerOrHigher = (req, res, next) => {
   }
 };
 
+const isAuthTenant = (req, res, next) => {
+  if (req.isAuthenticated("tenant")) {
+    return next();
+  } else {
+    return res.status(401).json({ errorMsg: "Unauthorized Access" });
+  }
+};
+
 module.exports = {
   isAuthenticatedAdmin,
   isAuthManagerOrHigher,
+  isAuthTenant,
 };

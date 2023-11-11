@@ -5,7 +5,9 @@ import PersonIcon from "@mui/icons-material/Person";
 import HandymanIcon from "@mui/icons-material/Handyman";
 import ListIcon from "@mui/icons-material/List";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
-import ApartmentIcon from '@mui/icons-material/Apartment';
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
+import CorporateFareIcon from "@mui/icons-material/CorporateFare";
 const Sidebar = () => {
   return (
     <div className="sidebar-container">
@@ -21,6 +23,24 @@ const Sidebar = () => {
             <DashboardIcon />
           </span>
           Dashboard
+        </div>
+        <div className="sidebar-item">
+          <span>
+            <PersonIcon />
+          </span>
+          Profile
+        </div>
+        <div className="sidebar-item">
+          <span>
+            <CorporateFareIcon />
+          </span>
+          Buildings
+        </div>
+        <div className="sidebar-item">
+          <span>
+            <SupervisorAccountIcon />
+          </span>
+          Managers
         </div>
         <div className="sidebar-item">
           <span>

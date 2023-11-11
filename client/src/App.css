@@ -20,6 +20,11 @@ body {
 .card-form-input {
   margin-top: 30px;
 }
+.card-form-input.switch {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 .card-title {
   font-size: 30px;
   color: rgb(52, 71, 103);
@@ -53,4 +58,16 @@ body {
 .card-btn.cancel:hover {
   background-position: left bottom;
   color: white;
+}
+.switch-title {
+  margin-right: 10px;
+  color: rgba(52, 71, 103,0.8);
+  font-weight: bolder;
+}
+.switch-container {
+  margin: 0px 5px;
+}
+.switch-value-label {
+  color: #22264c;
+  font-weight: bolder;
 }

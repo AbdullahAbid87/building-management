@@ -1,40 +1,35 @@
 const mongoose = require("mongoose");
 
-const UserSchema = mongoose.Schema({
+const ApartmentSchema = mongoose.Schema({
   buildingId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "building",
+    required: true,
   },
-  apartmentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "apartment",
-  },
-  name: {
+  apartmentTitle: {
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
+  numberOfBedrooms: {
     type: String,
     required: true,
   },
-  phoneNumber: {
+  numberOfBathrooms: {
+    type: Number,
+    required: true,
+  },
+  floorLevel: {
     type: String,
     required: true,
   },
-  type: {
+  monthlyRent: {
     type: String,
     required: true,
   },
-  image: {
-    type: String,
-  },
-  profession: {
-    type: String,
+  isRented: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
   date: {
     type: Date,
@@ -42,4 +37,4 @@ const UserSchema = mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("user", UserSchema);
+module.exports = mongoose.model("apartment", ApartmentSchema);

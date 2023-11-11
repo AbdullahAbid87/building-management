@@ -6,6 +6,8 @@ import Login from "./pages/Login";
 import AddTenant from "./pages/AddTenant";
 import ViewTenants from "./pages/ViewTenants";
 import AddApartment from "./pages/AddApartment";
+import AddBuilding from "./pages/AddBuilding";
+import ViewBuildings from "./pages/ViewBuildings";
 const AppRoutes = () => {
   return (
     <Fragment>
@@ -15,6 +17,8 @@ const AppRoutes = () => {
         <Route path="/addTenant" element={<AddTenant />} />
         <Route path="/viewTenants" element={<ViewTenants />} />
         <Route path="/addApartment" element={<AddApartment />} />
+        <Route path="/addBuilding" element={<AddBuilding />} />
+        <Route path="/viewBuildings" element={<ViewBuildings />} />
       </Routes>
     </Fragment>
   );

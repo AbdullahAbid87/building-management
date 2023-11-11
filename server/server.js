@@ -44,5 +44,7 @@ IntializePassport(passport);
 //Define Routes
 app.use("/api/admin", require("./routes/admin"));
 app.use("/api/manager", require("./routes/manager"));
+app.use("/api/crew", require("./routes/crew"));
+app.use("/api/tenant", require("./routes/tenant"));
 
 server.listen(PORT, () => console.log(`Servunning on por ${PORT}`));
