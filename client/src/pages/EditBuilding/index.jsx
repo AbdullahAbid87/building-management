@@ -13,25 +13,29 @@ import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../components/Loader";
-import { addBuilding, setAddBuilding } from "../../redux/actions/adminAction";
+import {
+  addBuilding,
+  editBuilding,
+  setEditBuilding,
+} from "../../redux/actions/adminAction";
 import { useNavigate } from "react-router-dom";
 import BuildingType from "../../constants/BuildingType";
 
-const AddBuilding = () => {
+const EditBuilding = () => {
   const Admin = useSelector(({ Admin }) => Admin);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { addBuildingForm } = Admin;
-  const { title, address, numberOfFloors, parkingAvailability, type } =
-    addBuildingForm;
+  const { editBuildingForm } = Admin;
+  const { _id, title, address, numberOfFloors, parkingAvailability, type } =
+    editBuildingForm;
 
   const onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     console.log(value);
     dispatch(
-      setAddBuilding({
+      setEditBuilding({
         name,
         value,
       })
@@ -39,7 +43,7 @@ const AddBuilding = () => {
   };
   const toggleSwitch = (e) => {
     dispatch(
-      setAddBuilding({
+      setEditBuilding({
         name: "parkingAvailability",
         value: !parkingAvailability,
       })
@@ -47,9 +51,11 @@ const AddBuilding = () => {
   };
 
   const onClick = () => {
+    const buildingId = _id;
     dispatch(
-      addBuilding({
+      editBuilding({
         data: {
+          buildingId,
           title,
           address,
           type,
@@ -65,7 +71,7 @@ const AddBuilding = () => {
     <Fragment>
       <FormLayout>
         <Card>
-          <div className="card-title">Add Building</div>
+          <div className="card-title">Edit Building</div>
           <div className="card-form-inputs-container">
             <div className="card-form-input">
               <TextField
@@ -125,6 +131,7 @@ const AddBuilding = () => {
                   value={parkingAvailability}
                   name="parkingAvailability"
                   onChange={toggleSwitch}
+                  checked={parkingAvailability}
                 />
               </div>
               <span className="switch-value-label">Yes</span>
@@ -142,7 +149,7 @@ const AddBuilding = () => {
                 className="card-btn dual"
                 onClick={onClick}
               >
-                Add Building
+                Update Building
               </Button>
             </div>
           </div>
@@ -153,4 +160,4 @@ const AddBuilding = () => {
   );
 };
 
-export default withDashboard(AddBuilding);
+export default withDashboard(EditBuilding);

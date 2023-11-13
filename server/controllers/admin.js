@@ -256,10 +256,27 @@ const removeManager = async ({ userId }) => {
   }
 };
 
-const getManagers = async ({ buildingId }) => {
+const getManagers = async () => {
   try {
     const type = "manager";
-    const managers = await User.find({ buildingId, type });
+    const managers = await User.aggregate([
+      {
+        $match: {
+          type,
+        },
+      },
+      {
+        $lookup: {
+          from: "buildings",
+          localField: "buildingId",
+          foreignField: "_id",
+          as: "building",
+        },
+      },
+      {
+        $unwind: "$building",
+      },
+    ]);
     return managers;
   } catch (error) {
     console.log(error);

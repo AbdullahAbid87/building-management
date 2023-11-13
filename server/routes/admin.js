@@ -181,6 +181,7 @@ router.get("/getBuildings", isAuthenticatedAdmin, async (req, res) => {
 router.post(
   "/addManager",
   [
+    check("buildingId", "Building Id is required").not().isEmpty(),
     check("name", "Full Name is required").not().isEmpty(),
     check("email", "Please include a valid email").isEmail(),
     check("phoneNumber", "phoneNumber is required").not().isEmpty(),
@@ -262,17 +263,9 @@ router.post("/removeManager", isAuthenticatedAdmin, async (req, res) => {
 //@route    POST api/admin/getManagers
 //@desc     Get all Managers
 //@access   Private
-router.post("/managers", isAuthenticatedAdmin, async (req, res) => {
+router.get("/managers", isAuthenticatedAdmin, async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const { buildingId } = req.body;
-    const building_Id = new ObjectId(buildingId);
-    const managers = await getManagers({
-      buildingId: building_Id,
-    });
+    const managers = await getManagers();
     res.json({ managers });
   } catch (error) {
     console.log(error);

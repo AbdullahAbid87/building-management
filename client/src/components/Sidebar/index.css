@@ -2,7 +2,8 @@
   background: rgba(0, 0, 0, 0)
     linear-gradient(195deg, rgb(66, 66, 74), rgb(25, 25, 25)) repeat scroll 0%
     0%;
-  width: 90%;
+  position: fixed;
+  width: 18%;
   padding: 20px;
   color: white;
   margin: 20px;

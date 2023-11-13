@@ -2,7 +2,7 @@
 .table-container {
   overflow-x: auto;
   margin: 20px;
-  padding-top: 50px;
+  padding-top: 25px;
 }
 
 table {
@@ -57,15 +57,15 @@ th {
   box-shadow: rgba(0, 0, 0, 0.14) 0rem 0.25rem 1.25rem 0rem,
     rgba(0, 187, 212, 0.4) 0rem 0.4375rem 0.625rem -0.3125rem;
   color: white;
-  position: fixed;
-  width: 71%;
+  position: absolute;
+  width: 96%;
   box-sizing: border-box;
-  margin-left: 16px;
-  margin-right: 16px;
-  margin-top: -28px;
-}
-.table-card{
-    overflow: auto;
-    position: relative;
-    margin-top: 100px;
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-top: -50px;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }

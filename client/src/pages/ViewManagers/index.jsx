@@ -4,13 +4,14 @@ import Card from "../../components/Card";
 import Table from "../../components/Table";
 import Layout from "../../components/Layout";
 import Avatar from "../../assets/Avatar.jpg";
-import "./index.css";
 import { useEffect } from "react";
 import {
   getBuildings,
+  getManagers,
   removeBuilding,
   setAdmin,
   setSearchBuilding,
+  setSearchManager,
 } from "../../redux/actions/adminAction";
 import { useDispatch, useSelector } from "react-redux";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -34,7 +35,7 @@ import Pagination from "../../components/Pagination";
 import SearchIcon from "@mui/icons-material/Search";
 import styled from "@emotion/styled";
 
-const ViewBuildings = () => {
+const ViewManagers = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const Admin = useSelector(({ Admin }) => Admin);
@@ -46,19 +47,30 @@ const ViewBuildings = () => {
     totalBuildingPages,
     buildingPerPage,
     buildingSearch,
+
+    managers,
+    filteredManagers,
+    paginatedManagers,
+    currentManagerPage,
+    totalManagerPages,
+    managerPerPage,
+    managerSearch,
   } = Admin;
+
   useEffect(() => {
-    dispatch(getBuildings());
+    dispatch(getManagers());
   }, []);
 
-  const onEdit = (building) => {
+  const onEdit = (manager) => {
+    const { name, email, phoneNumber, building } = manager;
+    const data = { name, email, phoneNumber, building };
     dispatch(
       setAdmin({
-        name: "editBuildingForm",
-        value: building,
+        name: "editManagerForm",
+        value: data,
       })
     );
-    navigate("/editBuilding");
+    navigate("/editManager");
   };
 
   const onDelete = async (building) => {
@@ -69,26 +81,26 @@ const ViewBuildings = () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Delete Building",
+      confirmButtonText: "Yes, Delete Manager",
       cancelButtonText: "No",
     });
     const buildingId = building._id;
 
     if (result.isConfirmed) {
-      dispatch(
-        removeBuilding({
-          data: {
-            buildingId,
-          },
-        })
-      );
+      //   dispatch(
+      //     removeBuilding({
+      //       data: {
+      //         buildingId,
+      //       },
+      //     })
+      //   );
     }
   };
 
   const setTotalPages = (totalpages) => {
     dispatch(
       setAdmin({
-        name: "totalBuildingPages",
+        name: "totalManagerPages",
         value: totalpages,
       })
     );
@@ -96,7 +108,7 @@ const ViewBuildings = () => {
   const setCurrentPage = (currentPage) => {
     dispatch(
       setAdmin({
-        name: "currentBuildingPage",
+        name: "currentManagerPage",
         value: currentPage,
       })
     );
@@ -104,7 +116,7 @@ const ViewBuildings = () => {
   const setPaginatedItems = (paginatedItems) => {
     dispatch(
       setAdmin({
-        name: "paginatedBuildings",
+        name: "paginatedManagers",
         value: paginatedItems,
       })
     );
@@ -113,7 +125,7 @@ const ViewBuildings = () => {
     const value = event.target.value;
     dispatch(
       setAdmin({
-        name: "buildingPerPage",
+        name: "managerPerPage",
         value,
       })
     );
@@ -121,10 +133,10 @@ const ViewBuildings = () => {
 
   const onSearch = (e) => {
     const value = e.target.value;
-    dispatch(setSearchBuilding(value));
+    dispatch(setSearchManager(value));
     dispatch(
       setAdmin({
-        name: "buildingSearch",
+        name: "managerSearch",
         value: value,
       })
     );
@@ -136,17 +148,17 @@ const ViewBuildings = () => {
           <Button
             variant="contained"
             className="add-btn"
-            onClick={() => navigate("/addBuilding")}
+            onClick={() => navigate("/addManager")}
           >
             <span>
               <AddIcon />
             </span>
-            Add Building
+            Add Manager
           </Button>
         </div>
         <Card className="table-card">
           <div className="table-title">
-            <span>Building Table</span>
+            <span>Managers Table</span>
             <div>
               <TextField
                 fullWidth
@@ -160,50 +172,38 @@ const ViewBuildings = () => {
                   ),
                 }}
                 onChange={onSearch}
-                value={buildingSearch}
+                value={managerSearch}
               />
             </div>
           </div>
           <div className="table-container">
             <table>
               <thead>
-                <th>Title</th>
-                <th>Address</th>
-                <th>Number of Floors</th>
-                <th>Building Type</th>
-                <th>Parking Availability</th>
+                <th>Building</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
                 <th>action</th>
               </thead>
               <tbody>
-                {paginatedBuildings.map((building) => (
+                {paginatedManagers.map((manager) => (
                   <Fragment>
                     <tr>
-                      <td>{building.title}</td>
-                      <td>{building.address}</td>
-                      <td>{building.numberOfFloors}</td>
-                      <td>{building.type}</td>
-                      <td>
-                        {building.parkingAvailability ? (
-                          <span className="isCheck">
-                            <CheckCircleIcon />
-                          </span>
-                        ) : (
-                          <span className="isNotChecked">
-                            <CancelIcon />
-                          </span>
-                        )}
-                      </td>
+                      <td>{manager.building.title}</td>
+                      <td>{manager.name}</td>
+                      <td>{manager.email}</td>
+                      <td>{manager.phoneNumber}</td>
                       <td>
                         <div className="action-row">
                           <ButtonBase
                             className="action-btn edit"
-                            onClick={() => onEdit(building)}
+                            onClick={() => onEdit(manager)}
                           >
                             <EditIcon />
                           </ButtonBase>
                           <ButtonBase
                             className="action-btn delete"
-                            onClick={() => onDelete(building)}
+                            onClick={() => onDelete(manager)}
                           >
                             <DeleteIcon />
                           </ButtonBase>
@@ -216,12 +216,12 @@ const ViewBuildings = () => {
             </table>
           </div>
           <Pagination
-            currentPage={currentBuildingPage}
+            currentPage={currentManagerPage}
             setCurrentPage={setCurrentPage}
-            items={filteredBuildings}
-            totalPages={totalBuildingPages}
+            items={filteredManagers}
+            totalPages={totalManagerPages}
             setTotalPages={setTotalPages}
-            itemsPerPage={buildingPerPage}
+            itemsPerPage={managerPerPage}
             setPaginatedItems={setPaginatedItems}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
           />
@@ -232,4 +232,4 @@ const ViewBuildings = () => {
   );
 };
 
-export default withDashboard(ViewBuildings);
+export default withDashboard(ViewManagers);

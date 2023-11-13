@@ -8,12 +8,17 @@ import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import CorporateFareIcon from "@mui/icons-material/CorporateFare";
+import BusinessIcon from "@mui/icons-material/Business";
+import { useLocation, useNavigate } from "react-router-dom";
 const Sidebar = () => {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
   return (
     <div className="sidebar-container">
       <div className="sidebar-header-title">
         <span>
-          <ApartmentIcon />
+          <BusinessIcon />
         </span>
         RentHaven
       </div>
@@ -30,13 +35,22 @@ const Sidebar = () => {
           </span>
           Profile
         </div>
-        <div className="sidebar-item">
+        <div
+          className="sidebar-item"
+          onClick={() => navigate("/viewBuildings")}
+        >
           <span>
             <CorporateFareIcon />
           </span>
           Buildings
         </div>
         <div className="sidebar-item">
+          <span>
+            <ApartmentIcon />
+          </span>
+          Apartments
+        </div>
+        <div className="sidebar-item" onClick={() => navigate("/viewManagers")}>
           <span>
             <SupervisorAccountIcon />
           </span>
