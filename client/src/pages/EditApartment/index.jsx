@@ -1,49 +1,46 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
-import {
-  Autocomplete,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
-import Switch from "@mui/material/Switch";
 import { useDispatch, useSelector } from "react-redux";
-import Loader from "../../components/Loader";
-import {
-  addBuilding,
-  addManager,
-  getBuildings,
-  setAddManager,
-} from "../../redux/actions/adminAction";
 import { useNavigate } from "react-router-dom";
-import BuildingType from "../../constants/BuildingType";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { getBuildings } from "../../redux/actions/adminAction";
+import {
+  addApartment,
+  editApartment,
+  setAddApartment,
+  setEditApartment,
+} from "../../redux/actions/managerAction";
 
-const AddManager = () => {
-  const [showPassword, setshowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+const EditApartment = () => {
   const Admin = useSelector(({ Admin }) => Admin);
+  const User = useSelector(({ User }) => User);
+  const Manager = useSelector(({ Manager }) => Manager);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { addManagerForm, buildings } = Admin;
-  const { name, email, password, confirmPassword, phoneNumber, building } =
-    addManagerForm;
+  const { buildings } = Admin;
+  const { currentUser } = User;
+  const { editApartmentForm } = Manager;
+  const {
+    _id,
+    building,
+    apartmentTitle,
+    numberOfBedrooms,
+    numberOfBathrooms,
+    floorLevel,
+    monthlyRent,
+  } = editApartmentForm;
+
+  const isAdmin = currentUser.type === "admin";
 
   const onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(value);
     dispatch(
-      setAddManager({
+      setEditApartment({
         name,
         value,
       })
@@ -52,14 +49,17 @@ const AddManager = () => {
 
   const onClick = () => {
     const buildingId = building._id;
+    const apartmentId = _id;
     dispatch(
-      addManager({
+      editApartment({
         data: {
+          apartmentId,
           buildingId,
-          name,
-          email,
-          password,
-          phoneNumber,
+          apartmentTitle,
+          numberOfBedrooms,
+          numberOfBathrooms,
+          floorLevel,
+          monthlyRent,
         },
         navigate,
       })
@@ -67,14 +67,14 @@ const AddManager = () => {
   };
 
   useEffect(() => {
-    dispatch(getBuildings());
+    if (isAdmin) dispatch(getBuildings());
   }, []);
 
   return (
     <Fragment>
       <FormLayout>
         <Card>
-          <div className="card-title">Add Manager</div>
+          <div className="card-title">Edit Apartment</div>
           <div className="card-form-inputs-container">
             <div className="card-form-input">
               <Autocomplete
@@ -97,92 +97,64 @@ const AddManager = () => {
             </div>
             <div className="card-form-input">
               <TextField
-                label="Name"
+                id="outlined-basic"
+                label="Apartment Title"
                 variant="outlined"
                 className="w-100"
-                name="name"
+                name="apartmentTitle"
                 onChange={onChange}
-                value={name}
+                value={apartmentTitle}
               />
             </div>
             <div className="card-form-input">
               <TextField
-                label="Email"
+                id="outlined-basic"
+                label="Number of Bedrooms"
                 variant="outlined"
                 className="w-100"
-                name="email"
+                name="numberOfBedrooms"
                 onChange={onChange}
-                value={email}
+                value={numberOfBedrooms}
               />
             </div>
             <div className="card-form-input">
               <TextField
-                label="Password"
+                id="outlined-basic"
+                label="Number of Bathrooms"
                 variant="outlined"
                 className="w-100"
-                name="password"
+                name="numberOfBathrooms"
                 onChange={onChange}
-                value={password}
-                type={showPassword ? "text" : "password"}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setshowPassword(!showPassword)}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
+                value={numberOfBathrooms}
               />
             </div>
             <div className="card-form-input">
               <TextField
-                label="Confirm Password"
+                id="outlined-basic"
+                label="Floor Level"
                 variant="outlined"
                 className="w-100"
-                name="confirmPassword"
+                name="floorLevel"
                 onChange={onChange}
-                value={confirmPassword}
-                type={showConfirmPassword ? "text" : "password"}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        edge="end"
-                      >
-                        {showConfirmPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
+                value={floorLevel}
               />
             </div>
             <div className="card-form-input">
               <TextField
-                label="Phone Number"
+                id="outlined-basic"
+                label="Monthly Rent"
                 variant="outlined"
                 className="w-100"
-                name="phoneNumber"
+                name="monthlyRent"
                 onChange={onChange}
-                value={phoneNumber}
+                value={monthlyRent}
               />
             </div>
-
             <div className="card-btn-container dual">
               <Button
                 variant="contained"
                 className="card-btn dual cancel"
-                onClick={() => navigate("/viewManagers")}
+                onClick={() => navigate("/viewApartments")}
               >
                 Cancel
               </Button>
@@ -191,15 +163,14 @@ const AddManager = () => {
                 className="card-btn dual"
                 onClick={onClick}
               >
-                Add Manager
+                Update Apartment
               </Button>
             </div>
           </div>
-          <Loader />
         </Card>
       </FormLayout>
     </Fragment>
   );
 };
 
-export default withDashboard(AddManager);
+export default withDashboard(EditApartment);

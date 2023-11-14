@@ -4,13 +4,13 @@ import Card from "../../components/Card";
 import Table from "../../components/Table";
 import Layout from "../../components/Layout";
 import Avatar from "../../assets/Avatar.jpg";
-import "./index.css";
 import { useEffect } from "react";
 import {
   getBuildings,
+  getManagers,
   removeBuilding,
-  setAdmin,
   setSearchBuilding,
+  setSearchManager,
 } from "../../redux/actions/adminAction";
 import { useDispatch, useSelector } from "react-redux";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -33,52 +33,59 @@ import Loader from "../../components/Loader";
 import Pagination from "../../components/Pagination";
 import SearchIcon from "@mui/icons-material/Search";
 import styled from "@emotion/styled";
+import {
+  getApartments,
+  removeApartment,
+  setManager,
+  setSearchApartment,
+} from "../../redux/actions/managerAction";
 
-const ViewBuildings = () => {
+const ViewApartments = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const Admin = useSelector(({ Admin }) => Admin);
+  const Manager = useSelector(({ Manager }) => Manager);
   const {
-    buildings,
-    filteredBuildings,
-    paginatedBuildings,
-    currentBuildingPage,
-    totalBuildingPages,
-    buildingPerPage,
-    buildingSearch,
-  } = Admin;
-  useEffect(() => {
-    dispatch(getBuildings());
-  }, [buildings]);
+    apartments,
+    filteredApartments,
+    paginatedApartments,
+    currentApartmentPage,
+    totalApartmentPages,
+    apartmentPerPage,
+    apartmentSearch,
+  } = Manager;
 
-  const onEdit = (building) => {
+  useEffect(() => {
+    dispatch(getApartments());
+  }, []);
+
+  const onEdit = (apartment) => {
     dispatch(
-      setAdmin({
-        name: "editBuildingForm",
-        value: building,
+      setManager({
+        name: "editApartmentForm",
+        value: apartment,
       })
     );
-    navigate("/editBuilding");
+    navigate("/editApartment");
   };
 
-  const onDelete = async (building) => {
+  const onDelete = async (apartment) => {
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "You are about to delete this building, you won't be able to revert this!",
+      text: "You are about to delete this Apartment, you won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Delete Building",
+      confirmButtonText: "Yes, Delete Apartment",
       cancelButtonText: "No",
     });
-    const buildingId = building._id;
-
+    const apartmentId = apartment._id;
     if (result.isConfirmed) {
       dispatch(
-        removeBuilding({
+        removeApartment({
           data: {
-            buildingId,
+            apartmentId,
           },
         })
       );
@@ -87,24 +94,24 @@ const ViewBuildings = () => {
 
   const setTotalPages = (totalpages) => {
     dispatch(
-      setAdmin({
-        name: "totalBuildingPages",
+      setManager({
+        name: "totalApartmentPages",
         value: totalpages,
       })
     );
   };
   const setCurrentPage = (currentPage) => {
     dispatch(
-      setAdmin({
-        name: "currentBuildingPage",
+      setManager({
+        name: "currentApartmentPage",
         value: currentPage,
       })
     );
   };
   const setPaginatedItems = (paginatedItems) => {
     dispatch(
-      setAdmin({
-        name: "paginatedBuildings",
+      setManager({
+        name: "paginatedApartments",
         value: paginatedItems,
       })
     );
@@ -112,8 +119,8 @@ const ViewBuildings = () => {
   const handleChangeRowsPerPage = (event) => {
     const value = event.target.value;
     dispatch(
-      setAdmin({
-        name: "buildingPerPage",
+      setManager({
+        name: "apartmentPerPage",
         value,
       })
     );
@@ -121,10 +128,10 @@ const ViewBuildings = () => {
 
   const onSearch = (e) => {
     const value = e.target.value;
-    dispatch(setSearchBuilding(value));
+    dispatch(setSearchApartment(value));
     dispatch(
-      setAdmin({
-        name: "buildingSearch",
+      setManager({
+        name: "apartmentSearch",
         value: value,
       })
     );
@@ -136,17 +143,17 @@ const ViewBuildings = () => {
           <Button
             variant="contained"
             className="add-btn"
-            onClick={() => navigate("/addBuilding")}
+            onClick={() => navigate("/addApartment")}
           >
             <span>
               <AddIcon />
             </span>
-            Add Building
+            Add Apartment
           </Button>
         </div>
         <Card className="table-card">
           <div className="table-title">
-            <span>Building Table</span>
+            <span>Apartments Table</span>
             <div>
               <TextField
                 fullWidth
@@ -160,50 +167,42 @@ const ViewBuildings = () => {
                   ),
                 }}
                 onChange={onSearch}
-                value={buildingSearch}
+                value={apartmentSearch}
               />
             </div>
           </div>
           <div className="table-container">
             <table>
               <thead>
+                <th>Building</th>
                 <th>Title</th>
-                <th>Address</th>
-                <th>Number of Floors</th>
-                <th>Building Type</th>
-                <th>Parking Availability</th>
+                <th>No of Bathrooms</th>
+                <th>No of Bedrooms</th>
+                <th>Floor Level</th>
+                <th>Monthly Rent</th>
                 <th>action</th>
               </thead>
               <tbody>
-                {paginatedBuildings.map((building) => (
+                {paginatedApartments.map((apartment) => (
                   <Fragment>
                     <tr>
-                      <td>{building.title}</td>
-                      <td>{building.address}</td>
-                      <td>{building.numberOfFloors}</td>
-                      <td>{building.type}</td>
-                      <td>
-                        {building.parkingAvailability ? (
-                          <span className="isCheck">
-                            <CheckCircleIcon />
-                          </span>
-                        ) : (
-                          <span className="isNotChecked">
-                            <CancelIcon />
-                          </span>
-                        )}
-                      </td>
+                      <td>{apartment.building.title}</td>
+                      <td>{apartment.apartmentTitle}</td>
+                      <td>{apartment.numberOfBedrooms}</td>
+                      <td>{apartment.numberOfBathrooms}</td>
+                      <td>{apartment.floorLevel}</td>
+                      <td>{apartment.monthlyRent}</td>
                       <td>
                         <div className="action-row">
                           <ButtonBase
                             className="action-btn edit"
-                            onClick={() => onEdit(building)}
+                            onClick={() => onEdit(apartment)}
                           >
                             <EditIcon />
                           </ButtonBase>
                           <ButtonBase
                             className="action-btn delete"
-                            onClick={() => onDelete(building)}
+                            onClick={() => onDelete(apartment)}
                           >
                             <DeleteIcon />
                           </ButtonBase>
@@ -216,12 +215,12 @@ const ViewBuildings = () => {
             </table>
           </div>
           <Pagination
-            currentPage={currentBuildingPage}
+            currentPage={currentApartmentPage}
             setCurrentPage={setCurrentPage}
-            items={filteredBuildings}
-            totalPages={totalBuildingPages}
+            items={filteredApartments}
+            totalPages={totalApartmentPages}
             setTotalPages={setTotalPages}
-            itemsPerPage={buildingPerPage}
+            itemsPerPage={apartmentPerPage}
             setPaginatedItems={setPaginatedItems}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
           />
@@ -232,4 +231,4 @@ const ViewBuildings = () => {
   );
 };
 
-export default withDashboard(ViewBuildings);
+export default withDashboard(ViewApartments);

@@ -11,7 +11,7 @@ const ApartmentSchema = mongoose.Schema({
     required: true,
   },
   numberOfBedrooms: {
-    type: String,
+    type: Number,
     required: true,
   },
   numberOfBathrooms: {
@@ -19,11 +19,11 @@ const ApartmentSchema = mongoose.Schema({
     required: true,
   },
   floorLevel: {
-    type: String,
+    type: Number,
     required: true,
   },
   monthlyRent: {
-    type: String,
+    type: Number,
     required: true,
   },
   isRented: {

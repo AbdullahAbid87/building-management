@@ -40,6 +40,7 @@ const initialState = {
     phoneNumber: "",
   },
   editManagerForm: {
+    _id: "",
     building: {},
     name: "",
     email: "",

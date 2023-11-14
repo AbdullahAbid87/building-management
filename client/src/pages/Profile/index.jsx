@@ -26,7 +26,7 @@ const Profile = () => {
                 <div className="profile-input-container">
                   <TextField
                     id="outlined-basic"
-                    label="Outlined"
+                    label="Name"
                     variant="outlined"
                     className="w-100"
                   />
@@ -36,7 +36,7 @@ const Profile = () => {
                 <div className="profile-input-container">
                   <TextField
                     id="outlined-basic"
-                    label="Outlined"
+                    label="Email"
                     variant="outlined"
                     className="w-100"
                   />
@@ -48,7 +48,7 @@ const Profile = () => {
                 <div className="profile-input-container">
                   <TextField
                     id="outlined-basic"
-                    label="Outlined"
+                    label="Password"
                     variant="outlined"
                     className="w-100"
                   />
@@ -58,7 +58,7 @@ const Profile = () => {
                 <div className="profile-input-container">
                   <TextField
                     id="outlined-basic"
-                    label="Outlined"
+                    label="Phone Number"
                     variant="outlined"
                     className="w-100"
                   />

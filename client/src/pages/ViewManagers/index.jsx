@@ -9,6 +9,7 @@ import {
   getBuildings,
   getManagers,
   removeBuilding,
+  removeManager,
   setAdmin,
   setSearchBuilding,
   setSearchManager,
@@ -62,8 +63,8 @@ const ViewManagers = () => {
   }, []);
 
   const onEdit = (manager) => {
-    const { name, email, phoneNumber, building } = manager;
-    const data = { name, email, phoneNumber, building };
+    let { _id, name, email, phoneNumber, building } = manager;
+    const data = { name, email, phoneNumber, building, _id };
     dispatch(
       setAdmin({
         name: "editManagerForm",
@@ -73,7 +74,7 @@ const ViewManagers = () => {
     navigate("/editManager");
   };
 
-  const onDelete = async (building) => {
+  const onDelete = async (manager) => {
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "You are about to delete this building, you won't be able to revert this!",
@@ -84,16 +85,16 @@ const ViewManagers = () => {
       confirmButtonText: "Yes, Delete Manager",
       cancelButtonText: "No",
     });
-    const buildingId = building._id;
+    const managerId = manager._id;
 
     if (result.isConfirmed) {
-      //   dispatch(
-      //     removeBuilding({
-      //       data: {
-      //         buildingId,
-      //       },
-      //     })
-      //   );
+      dispatch(
+        removeManager({
+          data: {
+            managerId,
+          },
+        })
+      );
     }
   };
 

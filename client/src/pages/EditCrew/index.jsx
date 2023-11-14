@@ -28,33 +28,43 @@ import BuildingType from "../../constants/BuildingType";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Autocomplete from "@mui/material/Autocomplete";
+import {
+  editCrew,
+  editTenant,
+  setEditCrew,
+  setEditTenant,
+} from "../../redux/actions/managerAction";
+import Profession from "../../constants/Profession";
 
-const EditManager = () => {
+const EditCrew = () => {
   const [showPassword, setshowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [editEmailDisabled, setEditEmailDisabled] = useState(false);
   const [editPasswordDisabled, setEditPasswordDisabled] = useState(false);
   const Admin = useSelector(({ Admin }) => Admin);
+  const Manager = useSelector(({ Manager }) => Manager);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { buildings } = Admin;
+  const { editTenantForm, apartments, editCrewForm } = Manager;
 
-  const { editManagerForm, buildings } = Admin;
-  const { name, email, password, confirmPassword, phoneNumber, building, _id } =
-    editManagerForm;
-  useEffect(() => {
-    dispatch(
-      setEditManager({
-        name: "building",
-        value: building,
-      })
-    );
-  }, []);
+
+  const {
+    building,
+    profession,
+    name,
+    email,
+    password,
+    confirmPassword,
+    phoneNumber,
+    _id,
+  } = editCrewForm;
 
   const onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     dispatch(
-      setEditManager({
+      setEditCrew({
         name,
         value,
       })
@@ -63,11 +73,11 @@ const EditManager = () => {
 
   const onClick = () => {
     const buildingId = building._id;
-    const managerId = _id;
-
+    const crewId = _id;
     let data = {
       buildingId,
-      managerId,
+      crewId,
+      profession,
       name,
       phoneNumber,
     };
@@ -78,22 +88,18 @@ const EditManager = () => {
       data.password = password;
     }
     dispatch(
-      editManager({
+      editCrew({
         data,
         navigate,
       })
     );
   };
 
-  useEffect(() => {
-    dispatch(getBuildings());
-  }, []);
-
   return (
     <Fragment>
       <FormLayout>
         <Card>
-          <div className="card-title">Edit Manager</div>
+          <div className="card-title">Edit Crew</div>
           <div className="card-form-inputs-container">
             <div className="card-form-input">
               <Autocomplete
@@ -112,6 +118,25 @@ const EditManager = () => {
                   });
                 }}
                 value={building}
+              />
+            </div>
+            <div className="card-form-input">
+              <Autocomplete
+                options={Profession}
+                getOptionLabel={(option) => option}
+                name={"profession"}
+                renderInput={(params) => (
+                  <TextField {...params} label="Profession" />
+                )}
+                onChange={(event, newValue) => {
+                  onChange({
+                    target: {
+                      name: "profession",
+                      value: newValue,
+                    },
+                  });
+                }}
+                value={profession}
               />
             </div>
             <div className="card-form-input">
@@ -232,7 +257,7 @@ const EditManager = () => {
               <Button
                 variant="contained"
                 className="card-btn dual cancel"
-                onClick={() => navigate("/viewManagers")}
+                onClick={() => navigate("/viewCrews")}
               >
                 Cancel
               </Button>
@@ -241,7 +266,7 @@ const EditManager = () => {
                 className="card-btn dual"
                 onClick={onClick}
               >
-                Update Manager
+                Update Tenant
               </Button>
             </div>
           </div>
@@ -252,4 +277,4 @@ const EditManager = () => {
   );
 };
 
-export default withDashboard(EditManager);
+export default withDashboard(EditCrew);

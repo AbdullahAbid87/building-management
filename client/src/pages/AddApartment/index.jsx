@@ -1,11 +1,70 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
-import { TextField } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { getBuildings } from "../../redux/actions/adminAction";
+import {
+  addApartment,
+  setAddApartment,
+} from "../../redux/actions/managerAction";
 
 const AddApartment = () => {
+  const Admin = useSelector(({ Admin }) => Admin);
+  const User = useSelector(({ User }) => User);
+  const Manager = useSelector(({ Manager }) => Manager);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { buildings } = Admin;
+  const { currentUser } = User;
+  const { addApartmentForm } = Manager;
+  const {
+    building,
+    apartmentTitle,
+    numberOfBedrooms,
+    numberOfBathrooms,
+    floorLevel,
+    monthlyRent,
+  } = addApartmentForm;
+
+  const isAdmin = currentUser.type === "admin";
+
+  const onChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    dispatch(
+      setAddApartment({
+        name,
+        value,
+      })
+    );
+  };
+
+  const onClick = () => {
+    const buildingId = building._id;
+    dispatch(
+      addApartment({
+        data: {
+          buildingId,
+          apartmentTitle,
+          numberOfBedrooms,
+          numberOfBathrooms,
+          floorLevel,
+          monthlyRent,
+        },
+        navigate,
+      })
+    );
+  };
+
+  useEffect(() => {
+    if (isAdmin) dispatch(getBuildings());
+  }, []);
+
   return (
     <Fragment>
       <FormLayout>
@@ -13,11 +72,33 @@ const AddApartment = () => {
           <div className="card-title">Add Apartment</div>
           <div className="card-form-inputs-container">
             <div className="card-form-input">
+              <Autocomplete
+                options={buildings}
+                getOptionLabel={(option) => option.title}
+                name={"building"}
+                renderInput={(params) => (
+                  <TextField {...params} label="Building" />
+                )}
+                onChange={(event, newValue) => {
+                  onChange({
+                    target: {
+                      name: "building",
+                      value: newValue,
+                    },
+                  });
+                }}
+                value={building}
+              />
+            </div>
+            <div className="card-form-input">
               <TextField
                 id="outlined-basic"
                 label="Apartment Title"
                 variant="outlined"
                 className="w-100"
+                name="apartmentTitle"
+                onChange={onChange}
+                value={apartmentTitle}
               />
             </div>
             <div className="card-form-input">
@@ -26,6 +107,9 @@ const AddApartment = () => {
                 label="Number of Bedrooms"
                 variant="outlined"
                 className="w-100"
+                name="numberOfBedrooms"
+                onChange={onChange}
+                value={numberOfBedrooms}
               />
             </div>
             <div className="card-form-input">
@@ -34,6 +118,9 @@ const AddApartment = () => {
                 label="Number of Bathrooms"
                 variant="outlined"
                 className="w-100"
+                name="numberOfBathrooms"
+                onChange={onChange}
+                value={numberOfBathrooms}
               />
             </div>
             <div className="card-form-input">
@@ -42,6 +129,9 @@ const AddApartment = () => {
                 label="Floor Level"
                 variant="outlined"
                 className="w-100"
+                name="floorLevel"
+                onChange={onChange}
+                value={floorLevel}
               />
             </div>
             <div className="card-form-input">
@@ -50,13 +140,24 @@ const AddApartment = () => {
                 label="Monthly Rent"
                 variant="outlined"
                 className="w-100"
+                name="monthlyRent"
+                onChange={onChange}
+                value={monthlyRent}
               />
             </div>
             <div className="card-btn-container dual">
-              <Button variant="contained" className="card-btn dual cancel">
+              <Button
+                variant="contained"
+                className="card-btn dual cancel"
+                onClick={() => navigate("/viewApartments")}
+              >
                 Cancel
               </Button>
-              <Button variant="contained" className="card-btn dual">
+              <Button
+                variant="contained"
+                className="card-btn dual"
+                onClick={onClick}
+              >
                 Add Apartment
               </Button>
             </div>

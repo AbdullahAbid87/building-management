@@ -49,6 +49,7 @@ const logoutManager = async (req, res) => {
 
 const addCrew = async ({
   userId,
+  buildingId,
   profession,
   name,
   email,
@@ -56,11 +57,14 @@ const addCrew = async ({
   phoneNumber,
 }) => {
   try {
-    let manager = await User.findOne({ _id: userId });
-    if (!manager) {
-      throw new Error("Manager not found");
+    let organizer = await User.findOne({ _id: userId });
+    const isAdmin = organizer.type === "admin";
+    let building_Id = "";
+    if (isAdmin) {
+      building_Id = buildingId;
+    } else {
+      building_Id = organizer.buildingId;
     }
-    const buildingId = manager.buildingId;
     let user = await User.findOne({ email });
     if (user) {
       throw new Error("Email is already taken");
@@ -89,6 +93,8 @@ const addCrew = async ({
 
 const updateCrew = async ({
   userId,
+  crewId,
+  buildingId,
   profession,
   name,
   email,
@@ -96,11 +102,19 @@ const updateCrew = async ({
   phoneNumber,
 }) => {
   try {
+    let organizer = await User.findById(userId);
+    const isAdmin = organizer.type === "admin";
+
     let user = await User.findOne({ email });
     if (user) {
       throw new Error("Email is already taken");
     }
     let crewFields = {};
+    if (isAdmin) {
+      if (buildingId) {
+        crewFields.buildingId = buildingId;
+      }
+    }
     if (name) crewFields.name = name;
     if (email) crewFields.email = email;
     if (password) {
@@ -111,7 +125,7 @@ const updateCrew = async ({
     if (profession) crewFields.profession = profession;
     if (phoneNumber) crewFields.phoneNumber = phoneNumber;
     const crew = await User.findByIdAndUpdate(
-      userId,
+      crewId,
       {
         $set: crewFields,
       },
@@ -146,10 +160,54 @@ const removeCrew = async ({ userId, crewId }) => {
   }
 };
 
-const getCrew = async ({ buildingId }) => {
+const getCrew = async ({ buildingId, userId }) => {
   try {
+    let organizer = await User.findById(userId);
+    const isAdmin = organizer.type === "admin";
+    let crews = [];
     const type = "crew";
-    const crews = await User.find({ buildingId, type });
+    if (isAdmin) {
+      crews = await User.aggregate([
+        {
+          $match: {
+            type,
+          },
+        },
+        {
+          $lookup: {
+            from: "buildings",
+            localField: "buildingId",
+            foreignField: "_id",
+            as: "building",
+          },
+        },
+        {
+          $unwind: "$building",
+        },
+      ]);
+    } else {
+      const managersBuildingId = organizer.buildingId;
+      crews = await User.aggregate([
+        {
+          $match: {
+            buildingId: managersBuildingId,
+            type,
+          },
+        },
+        {
+          $lookup: {
+            from: "buildings",
+            localField: "buildingId",
+            foreignField: "_id",
+            as: "building",
+          },
+        },
+        {
+          $unwind: "$building",
+        },
+      ]);
+    }
+
     return crews;
   } catch (error) {
     console.log(error);
@@ -159,6 +217,7 @@ const getCrew = async ({ buildingId }) => {
 
 const addApartment = async ({
   userId,
+  buildingId,
   apartmentTitle,
   numberOfBedrooms,
   numberOfBathrooms,
@@ -166,13 +225,14 @@ const addApartment = async ({
   monthlyRent,
 }) => {
   try {
-    let manager = await User.findOne({ _id: userId });
-    if (!manager) {
+    let user = await User.findOne({ _id: userId });
+    if (!user) {
       throw new Error("Manager not found");
     }
-    const managersBuildingId = manager.buildingId;
+    const isAdmin = user.type === "admin";
+    let BuildingId = isAdmin ? buildingId : user.buildingId;
     let apartmentFields = {
-      buildingId: managersBuildingId,
+      buildingId: BuildingId,
       apartmentTitle,
       numberOfBedrooms,
       numberOfBathrooms,
@@ -191,6 +251,7 @@ const addApartment = async ({
 const updateApartment = async ({
   userId,
   apartmentId,
+  buildingId,
   apartmentTitle,
   numberOfBedrooms,
   numberOfBathrooms,
@@ -198,17 +259,20 @@ const updateApartment = async ({
   monthlyRent,
 }) => {
   try {
-    let manager = await User.findOne({ _id: userId });
-    if (!manager) {
-      throw new Error("Manager not found");
-    }
+    let user = await User.findOne({ _id: userId });
     let apartment = await Apartment.findOne({ _id: apartmentId });
     if (!apartment) {
       throw new Error("Apartment not found");
     }
-    const managersBuildingId = manager.buildingId;
+    const isAdmin = user.type === "admin";
     let apartmentFields = {};
-    apartmentFields.buildingId = managersBuildingId;
+    if (isAdmin) {
+      apartmentFields.buildingId = buildingId;
+    } else {
+      const managersBuildingId = user.buildingId;
+      apartmentFields.buildingId = managersBuildingId;
+    }
+
     if (apartmentTitle) apartmentFields.apartmentTitle = apartmentTitle;
     if (numberOfBedrooms) apartmentFields.numberOfBedrooms = numberOfBedrooms;
     if (numberOfBathrooms)
@@ -233,16 +297,16 @@ const updateApartment = async ({
 
 const removeApartment = async ({ userId, apartmentId }) => {
   try {
-    let manager = await User.findById(userId);
-    if (!manager) {
-      throw new Error("Manager not found");
-    }
+    let user = await User.findById(userId);
+    const isAdmin = user.type === "admin";
     let apartment = await Apartment.findById(apartmentId);
     if (!apartment) {
       throw new Error("Apartment not found");
     }
-    if (manager.buildingId.toString() !== apartment.buildingId.toString()) {
-      throw new Error("Apartment is not under your management");
+    if (!isAdmin) {
+      if (user.buildingId.toString() !== apartment.buildingId.toString()) {
+        throw new Error("Apartment is not under your management");
+      }
     }
     await Apartment.findByIdAndRemove(apartmentId);
   } catch (error) {
@@ -253,12 +317,44 @@ const removeApartment = async ({ userId, apartmentId }) => {
 
 const getApartments = async ({ userId }) => {
   try {
-    let manager = await User.findById(userId);
-    if (!manager) {
-      throw new Error("Manager not found");
+    let user = await User.findById(userId);
+    const isAdmin = user.type === "admin";
+    let apartments = [];
+    if (isAdmin) {
+      apartments = await Apartment.aggregate([
+        {
+          $lookup: {
+            from: "buildings",
+            localField: "buildingId",
+            foreignField: "_id",
+            as: "building",
+          },
+        },
+        {
+          $unwind: "$building",
+        },
+      ]);
+    } else {
+      const managersBuildingId = user.buildingId;
+      apartments = await Apartment.aggregate([
+        {
+          $match: {
+            buildingId: managersBuildingId,
+          },
+        },
+        {
+          $lookup: {
+            from: "buildings",
+            localField: "buildingId",
+            foreignField: "_id",
+            as: "building",
+          },
+        },
+        {
+          $unwind: "$building",
+        },
+      ]);
     }
-    const managersBuildingId = manager.buildingId;
-    const apartments = await Apartment.find({ buildingId: managersBuildingId });
     return apartments;
   } catch (error) {
     console.log(error);
@@ -269,24 +365,28 @@ const getApartments = async ({ userId }) => {
 const addTenant = async ({
   userId,
   apartmentId,
+  buildingId,
   name,
   email,
   password,
   phoneNumber,
 }) => {
   try {
-    let manager = await User.findOne({ _id: userId });
-    if (!manager) {
-      throw new Error("Manager not found");
+    let organizer = await User.findOne({ _id: userId });
+    const isAdmin = organizer.type === "admin";
+    let building_Id = "";
+    if (isAdmin) {
+      building_Id = buildingId;
+    } else {
+      building_Id = organizer.buildingId;
     }
-    const buildingId = manager.buildingId;
     let user = await User.findOne({ email });
     if (user) {
       throw new Error("Email is already taken");
     }
     const type = "tenant";
     let tenantFields = {
-      buildingId,
+      buildingId: building_Id,
       apartmentId,
       name,
       email,
@@ -358,18 +458,18 @@ const updateTenant = async ({
 
 const removeTenant = async ({ userId, tenantId }) => {
   try {
-    let manager = await User.findById(userId);
-    if (!manager) {
-      throw new Error("Manager not found");
-    }
     let tenant = await User.findById(tenantId);
     if (!tenant) {
       throw new Error("Tenant not found");
     }
-    const managersBuildingId = manager.buildingId;
-    const tenantsBuildingId = tenant.buildingId;
-    if (managersBuildingId.toString() !== tenantsBuildingId) {
-      throw new Error("Tenant is not of your building");
+    let organizer = await User.findById(userId);
+    const isAdmin = organizer.type === "admin";
+    if (!isAdmin) {
+      const organizersBuildingId = organizer.buildingId;
+      const tenantsBuildingId = tenant.buildingId;
+      if (organizersBuildingId.toString() !== tenantsBuildingId) {
+        throw new Error("Tenant is not of your building");
+      }
     }
     await User.findByIdAndRemove(tenantId);
   } catch (error) {
@@ -380,16 +480,73 @@ const removeTenant = async ({ userId, tenantId }) => {
 
 const getTenants = async ({ userId }) => {
   try {
-    let manager = await User.findById(userId);
-    if (!manager) {
-      throw new Error("Manager not found");
-    }
-    const managersBuildingId = manager.buildingId;
+    let user = await User.findById(userId);
+    const isAdmin = user.type === "admin";
+    let tenants = [];
     const type = "tenant";
-    const tenants = await User.find({
-      buildingId: managersBuildingId,
-      type,
-    });
+    if (isAdmin) {
+      tenants = await User.aggregate([
+        {
+          $match: {
+            type,
+          },
+        },
+        {
+          $lookup: {
+            from: "buildings",
+            localField: "buildingId",
+            foreignField: "_id",
+            as: "building",
+          },
+        },
+        {
+          $unwind: "$building",
+        },
+        {
+          $lookup: {
+            from: "apartments",
+            localField: "apartmentId",
+            foreignField: "_id",
+            as: "apartment",
+          },
+        },
+        {
+          $unwind: "$apartment",
+        },
+      ]);
+    } else {
+      const managersBuildingId = user.buildingId;
+      tenants = await User.aggregate([
+        {
+          $match: {
+            buildingId: managersBuildingId,
+            type,
+          },
+        },
+        {
+          $lookup: {
+            from: "buildings",
+            localField: "buildingId",
+            foreignField: "_id",
+            as: "building",
+          },
+        },
+        {
+          $unwind: "$building",
+        },
+        {
+          $lookup: {
+            from: "apartments",
+            localField: "apartmentId",
+            foreignField: "_id",
+            as: "apartment",
+          },
+        },
+        {
+          $unwind: "$apartment",
+        },
+      ]);
+    }
     return tenants;
   } catch (error) {
     console.log(error);

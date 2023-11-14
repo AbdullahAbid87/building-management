@@ -162,12 +162,57 @@ export const addManager =
       await Axios.post(`${BASE_URL}/api/admin/addManager`, data, {
         withCredentials: true,
       });
-      // navigate("/viewBuildings");
-      // dispatch(getBuildings());
+      navigate("/viewManagers");
+      dispatch(getManagers());
       Swal.fire({
         position: "top-end",
         icon: "success",
         title: "Manager Added",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch(setLoader(false));
+  };
+
+export const editManager =
+  ({ data, navigate }) =>
+  async (dispatch) => {
+    dispatch(setLoader(true));
+    try {
+      await Axios.post(`${BASE_URL}/api/admin/updateManager`, data, {
+        withCredentials: true,
+      });
+      navigate("/viewManagers");
+      dispatch(getManagers());
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Manager Updated",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch(setLoader(false));
+  };
+
+export const removeManager =
+  ({ data }) =>
+  async (dispatch) => {
+    dispatch(setLoader(true));
+    try {
+      await Axios.post(`${BASE_URL}/api/admin/removeManager`, data, {
+        withCredentials: true,
+      });
+      dispatch(getManagers());
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Manager Deleted",
         showConfirmButton: false,
         timer: 1500,
       });

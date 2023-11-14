@@ -3,6 +3,7 @@ import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
 import {
+  Autocomplete,
   FormControl,
   InputLabel,
   MenuItem,
@@ -94,23 +95,23 @@ const EditBuilding = () => {
               />
             </div>
             <div className="card-form-input">
-              <FormControl fullWidth>
-                <InputLabel id="building-type-label">Building Type</InputLabel>
-                <Select
-                  labelId="building-type-label"
-                  className="w-100"
-                  value={type}
-                  label="Building Type"
-                  name={"type"}
-                  onChange={onChange}
-                >
-                  {BuildingType.map((type, index) => (
-                    <MenuItem key={index} value={type}>
-                      {type}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <Autocomplete
+                options={BuildingType}
+                getOptionLabel={(option) => option}
+                name={"type"}
+                renderInput={(params) => (
+                  <TextField {...params} label="Building Type" />
+                )}
+                onChange={(event, newValue) => {
+                  onChange({
+                    target: {
+                      name: "type",
+                      value: newValue,
+                    },
+                  });
+                }}
+                value={type}
+              />
             </div>
             <div className="card-form-input">
               <TextField

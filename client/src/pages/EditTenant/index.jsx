@@ -28,33 +28,35 @@ import BuildingType from "../../constants/BuildingType";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Autocomplete from "@mui/material/Autocomplete";
+import { editTenant, setEditTenant } from "../../redux/actions/managerAction";
 
-const EditManager = () => {
+const EditTenant = () => {
   const [showPassword, setshowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [editEmailDisabled, setEditEmailDisabled] = useState(false);
   const [editPasswordDisabled, setEditPasswordDisabled] = useState(false);
   const Admin = useSelector(({ Admin }) => Admin);
+  const Manager = useSelector(({ Manager }) => Manager);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const { editManagerForm, buildings } = Admin;
-  const { name, email, password, confirmPassword, phoneNumber, building, _id } =
-    editManagerForm;
-  useEffect(() => {
-    dispatch(
-      setEditManager({
-        name: "building",
-        value: building,
-      })
-    );
-  }, []);
+  const { buildings } = Admin;
+  const { editTenantForm, apartments } = Manager;
+  const {
+    name,
+    email,
+    password,
+    confirmPassword,
+    phoneNumber,
+    building,
+    apartment,
+    _id,
+  } = editTenantForm;
 
   const onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     dispatch(
-      setEditManager({
+      setEditTenant({
         name,
         value,
       })
@@ -63,11 +65,12 @@ const EditManager = () => {
 
   const onClick = () => {
     const buildingId = building._id;
-    const managerId = _id;
-
+    const apartmentId = apartment._id;
+    const tenantId = _id;
     let data = {
       buildingId,
-      managerId,
+      apartmentId,
+      tenantId,
       name,
       phoneNumber,
     };
@@ -78,22 +81,18 @@ const EditManager = () => {
       data.password = password;
     }
     dispatch(
-      editManager({
+      editTenant({
         data,
         navigate,
       })
     );
   };
 
-  useEffect(() => {
-    dispatch(getBuildings());
-  }, []);
-
   return (
     <Fragment>
       <FormLayout>
         <Card>
-          <div className="card-title">Edit Manager</div>
+          <div className="card-title">Edit Tenant</div>
           <div className="card-form-inputs-container">
             <div className="card-form-input">
               <Autocomplete
@@ -112,6 +111,25 @@ const EditManager = () => {
                   });
                 }}
                 value={building}
+              />
+            </div>
+            <div className="card-form-input">
+              <Autocomplete
+                options={apartments}
+                getOptionLabel={(option) => option.apartmentTitle}
+                name={"apartment"}
+                renderInput={(params) => (
+                  <TextField {...params} label="Apartment" />
+                )}
+                onChange={(event, newValue) => {
+                  onChange({
+                    target: {
+                      name: "apartment",
+                      value: newValue,
+                    },
+                  });
+                }}
+                value={apartment}
               />
             </div>
             <div className="card-form-input">
@@ -232,7 +250,7 @@ const EditManager = () => {
               <Button
                 variant="contained"
                 className="card-btn dual cancel"
-                onClick={() => navigate("/viewManagers")}
+                onClick={() => navigate("/viewTenants")}
               >
                 Cancel
               </Button>
@@ -241,7 +259,7 @@ const EditManager = () => {
                 className="card-btn dual"
                 onClick={onClick}
               >
-                Update Manager
+                Update Tenant
               </Button>
             </div>
           </div>
@@ -252,4 +270,4 @@ const EditManager = () => {
   );
 };
 
-export default withDashboard(EditManager);
+export default withDashboard(EditTenant);

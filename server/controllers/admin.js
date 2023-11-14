@@ -220,7 +220,13 @@ const updateManager = async ({
     let managerFieldsFields = {};
     if (buildingId) managerFieldsFields.buildingId = buildingId;
     if (name) managerFieldsFields.name = name;
-    if (email) managerFieldsFields.email = email;
+    if (email) {
+      const userFound = await User.findOne({ email });
+      if (userFound) {
+        throw new Error("Email Already Exists");
+      }
+      managerFieldsFields.email = email;
+    }
     if (password) {
       const salt = await bcrypt.genSalt(10);
       const encryptedPassword = await bcrypt.hash(password, salt);

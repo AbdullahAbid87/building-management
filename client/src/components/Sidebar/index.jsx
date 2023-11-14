@@ -44,7 +44,10 @@ const Sidebar = () => {
           </span>
           Buildings
         </div>
-        <div className="sidebar-item">
+        <div
+          className="sidebar-item"
+          onClick={() => navigate("/viewApartments")}
+        >
           <span>
             <ApartmentIcon />
           </span>
@@ -56,13 +59,13 @@ const Sidebar = () => {
           </span>
           Managers
         </div>
-        <div className="sidebar-item">
+        <div className="sidebar-item" onClick={() => navigate("/viewTenants")}>
           <span>
             <PersonIcon />
           </span>
           Tenants
         </div>
-        <div className="sidebar-item">
+        <div className="sidebar-item" onClick={() => navigate("/viewCrews")}>
           <span>
             <HandymanIcon />
           </span>

@@ -57,11 +57,14 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      const { profession, name, email, password, phoneNumber } = req.body;
+      const { buildingId, profession, name, email, password, phoneNumber } =
+        req.body;
       const userIdStr = req.user._id;
       const userId = new ObjectId(userIdStr);
+      const building_Id = new ObjectId(buildingId);
       const crew = await addCrew({
         userId,
+        buildingId: building_Id,
         profession,
         name,
         email,
@@ -85,10 +88,22 @@ router.post("/updateCrew", isAuthManagerOrHigher, async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const { crewId, profession, name, email, password, phoneNumber } = req.body;
-    const userId = new ObjectId(crewId);
+    const {
+      crewId,
+      buildingId,
+      profession,
+      name,
+      email,
+      password,
+      phoneNumber,
+    } = req.body;
+    const crew_Id = new ObjectId(crewId);
+    const userIdStr = req.user._id;
+    const userId = new ObjectId(userIdStr);
     const crew = await updateCrew({
       userId,
+      crewId: crew_Id,
+      buildingId,
       profession,
       name,
       email,
@@ -129,15 +144,14 @@ router.post("/removeCrew", isAuthManagerOrHigher, async (req, res) => {
 //@route    POST api/manager/removeCrew
 //@desc     Remove a Crew Member
 //@access   Private
-router.post("/crew", isAuthManagerOrHigher, async (req, res) => {
+router.get("/crew", isAuthManagerOrHigher, async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
     const { buildingId } = req.body;
+    const userIdStr = req.user._id;
+    const userId = new ObjectId(userIdStr);
     const building_Id = new ObjectId(buildingId);
     const crews = await getCrew({
+      userId,
       buildingId: building_Id,
     });
     res.json({ crews });
@@ -176,6 +190,7 @@ router.post(
         return res.status(400).json({ errors: errors.array() });
       }
       const {
+        buildingId,
         apartmentTitle,
         numberOfBedrooms,
         numberOfBathrooms,
@@ -186,6 +201,7 @@ router.post(
       const userId = new ObjectId(userIdStr);
       const apartment = await addApartment({
         userId,
+        buildingId,
         apartmentTitle,
         numberOfBedrooms,
         numberOfBathrooms,
@@ -210,6 +226,7 @@ router.post("/updateApartment", isAuthManagerOrHigher, async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
     }
     const {
+      buildingId,
       apartmentId,
       apartmentTitle,
       numberOfBedrooms,
@@ -220,8 +237,10 @@ router.post("/updateApartment", isAuthManagerOrHigher, async (req, res) => {
     const userIdStr = req.user._id;
     const userId = new ObjectId(userIdStr);
     const apartment_id = new ObjectId(apartmentId);
+    const building_Id = new ObjectId(buildingId);
     const apartment = await updateApartment({
       userId,
+      buildingId: building_Id,
       apartmentId: apartment_id,
       apartmentTitle,
       numberOfBedrooms,
@@ -300,12 +319,15 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      const { apartmentId, name, email, password, phoneNumber } = req.body;
+      const { apartmentId, buildingId, name, email, password, phoneNumber } =
+        req.body;
       const userIdStr = req.user._id;
       const userId = new ObjectId(userIdStr);
       const apartment_id = new ObjectId(apartmentId);
+      const building_Id = new ObjectId(buildingId);
       const tenant = await addTenant({
         userId,
+        buildingId: building_Id,
         apartmentId: apartment_id,
         name,
         email,

@@ -12,6 +12,13 @@ import EditBuilding from "./pages/EditBuilding";
 import AddManager from "./pages/AddManager";
 import VIewManagers from "./pages/ViewManagers";
 import EditManager from "./pages/EditManager";
+import ViewApartments from "./pages/ViewApartments";
+import EditApartment from "./pages/EditApartment";
+import EditTenant from "./pages/EditTenant";
+import AddCrew from "./pages/AddCrew";
+import ViewCrews from "./pages/ViewCrews";
+import EditCrew from "./pages/EditCrew";
+
 const AppRoutes = () => {
   return (
     <Fragment>
@@ -27,6 +34,13 @@ const AppRoutes = () => {
         <Route path="/addManager" element={<AddManager />} />
         <Route path="/viewManagers" element={<VIewManagers />} />
         <Route path="/editManager" element={<EditManager />} />
+        <Route path="/viewApartments" element={<ViewApartments />} />
+        <Route path="/editApartment" element={<EditApartment />} />
+        <Route path="/addTenant" element={<AddTenant />} />
+        <Route path="/editTenant" element={<EditTenant />} />
+        <Route path="/addCrew" element={<AddCrew />} />
+        <Route path="/editCrew" element={<EditCrew />} />
+        <Route path="/viewCrews" element={<ViewCrews />} />
       </Routes>
     </Fragment>
   );
