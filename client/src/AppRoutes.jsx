@@ -18,6 +18,9 @@ import EditTenant from "./pages/EditTenant";
 import AddCrew from "./pages/AddCrew";
 import ViewCrews from "./pages/ViewCrews";
 import EditCrew from "./pages/EditCrew";
+import AddRequest from "./pages/AddRequest";
+import ViewRequests from "./pages/ViewRequests";
+import EditRequest from "./pages/EditRequest";
 
 const AppRoutes = () => {
   return (
@@ -41,6 +44,9 @@ const AppRoutes = () => {
         <Route path="/addCrew" element={<AddCrew />} />
         <Route path="/editCrew" element={<EditCrew />} />
         <Route path="/viewCrews" element={<ViewCrews />} />
+        <Route path="/addRequest" element={<AddRequest />} />
+        <Route path="/editRequest" element={<EditRequest />} />
+        <Route path="/viewRequests" element={<ViewRequests />} />
       </Routes>
     </Fragment>
   );

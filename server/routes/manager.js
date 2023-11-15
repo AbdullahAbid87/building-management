@@ -310,7 +310,9 @@ router.post(
     check("email", "Please include a valid email").isEmail(),
     check("phoneNumber", "phoneNumber is required").not().isEmpty(),
     check("password", "Password is required").not().isEmpty(),
-    check("apartmentId", "Apartment Id is required").not().isEmpty(),
+    check("apartmentId")
+      .isArray({ min: 1 })
+      .withMessage("Apartment Ids should not be an empty array"),
   ],
   isAuthManagerOrHigher,
   async (req, res) => {
@@ -319,16 +321,16 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
+      console.log(req.body);
       const { apartmentId, buildingId, name, email, password, phoneNumber } =
         req.body;
       const userIdStr = req.user._id;
       const userId = new ObjectId(userIdStr);
-      const apartment_id = new ObjectId(apartmentId);
       const building_Id = new ObjectId(buildingId);
       const tenant = await addTenant({
         userId,
         buildingId: building_Id,
-        apartmentId: apartment_id,
+        apartmentId,
         name,
         email,
         password,

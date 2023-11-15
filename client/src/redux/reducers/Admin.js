@@ -1,4 +1,5 @@
 import {
+  CLEAR_STATE,
   SET_ADD_BUILDING,
   SET_ADD_MANAGER,
   SET_ADMIN,
@@ -32,7 +33,7 @@ const initialState = {
   buildingSearch: "",
   // Manager
   addManagerForm: {
-    building: {},
+    building: null,
     name: "",
     email: "",
     password: "",
@@ -41,7 +42,7 @@ const initialState = {
   },
   editManagerForm: {
     _id: "",
-    building: {},
+    building: null,
     name: "",
     email: "",
     password: "",
@@ -132,6 +133,9 @@ export default (state = initialState, action) => {
           [action.payload.name]: action.payload.value,
         },
       };
+    }
+    case CLEAR_STATE: {
+      return initialState;
     }
     default:
       return state;

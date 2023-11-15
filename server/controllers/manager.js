@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const { validationResult } = require("express-validator");
 const Apartment = require("../models/Apartment");
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types;
 
 const loginManager = async (req, res, next) => {
   try {
@@ -385,9 +387,10 @@ const addTenant = async ({
       throw new Error("Email is already taken");
     }
     const type = "tenant";
+    const apartmentIds = apartmentId.map((item) => new ObjectId(item));
     let tenantFields = {
       buildingId: building_Id,
-      apartmentId,
+      apartmentId: apartmentIds,
       name,
       email,
       password,
@@ -510,9 +513,6 @@ const getTenants = async ({ userId }) => {
             as: "apartment",
           },
         },
-        {
-          $unwind: "$apartment",
-        },
       ]);
     } else {
       const managersBuildingId = user.buildingId;
@@ -541,9 +541,6 @@ const getTenants = async ({ userId }) => {
             foreignField: "_id",
             as: "apartment",
           },
-        },
-        {
-          $unwind: "$apartment",
         },
       ]);
     }

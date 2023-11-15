@@ -39,7 +39,7 @@ const AddTenant = () => {
   const Manager = useSelector(({ Manager }) => Manager);
   const User = useSelector(({ User }) => User);
   const { currentUser } = User;
-  const isAdmin = currentUser.type === "admin";
+  const isAdmin = currentUser?.type === "admin";
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -69,7 +69,7 @@ const AddTenant = () => {
 
   const onClick = () => {
     const buildingId = building._id;
-    const apartmentId = apartment._id;
+    const apartmentId = apartment.map((item) => item._id);
 
     dispatch(
       addTenant({
@@ -87,7 +87,7 @@ const AddTenant = () => {
   };
 
   useEffect(() => {
-    dispatch(getBuildings());
+    if (isAdmin) dispatch(getBuildings());
     dispatch(getApartments());
   }, []);
 
@@ -121,6 +121,7 @@ const AddTenant = () => {
 
             <div className="card-form-input">
               <Autocomplete
+                multiple
                 options={apartments}
                 getOptionLabel={(option) => option.apartmentTitle}
                 name={"apartment"}
@@ -128,6 +129,7 @@ const AddTenant = () => {
                   <TextField {...params} label="Apartment" />
                 )}
                 onChange={(event, newValue) => {
+                  console.log(newValue);
                   onChange({
                     target: {
                       name: "apartment",

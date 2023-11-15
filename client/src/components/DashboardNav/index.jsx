@@ -5,8 +5,25 @@ import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import Button from "@mui/material/Button";
-
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../redux/actions/userAction";
+import { useDispatch, useSelector } from "react-redux";
 const DashboardNav = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const User = useSelector(({ User }) => User);
+  const { currentUser } = User;
+  const type = currentUser?.type;
+  const onLogout = () => {
+    dispatch(
+      logout({
+        data: {
+          type,
+        },
+        navigate,
+      })
+    );
+  };
   return (
     <div className="dashboard-navbar-container">
       <div className="dashboard-navbar-link-container">
@@ -29,7 +46,11 @@ const DashboardNav = () => {
           <NotificationsIcon />
         </div>
         <div className="dashboard-navbar-action-item">
-          <Button variant="contained" className="dashboard-btn">
+          <Button
+            variant="contained"
+            className="dashboard-btn"
+            onClick={onLogout}
+          >
             Logout
           </Button>
         </div>

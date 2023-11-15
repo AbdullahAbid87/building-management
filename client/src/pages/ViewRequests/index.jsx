@@ -14,11 +14,17 @@ import {
   setSearchManager,
 } from "../../redux/actions/adminAction";
 import {
+  getCrews,
   getTenants,
   removeTenant,
-  setManager,
+  setSearchCrew,
   setSearchTenant,
 } from "../../redux/actions/managerAction";
+import {
+  getRequests,
+  setSearchRequest,
+  setUser,
+} from "../../redux/actions/userAction";
 import { useDispatch, useSelector } from "react-redux";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -41,79 +47,89 @@ import Pagination from "../../components/Pagination";
 import SearchIcon from "@mui/icons-material/Search";
 import styled from "@emotion/styled";
 
-const ViewTenants = () => {
+const ViewRequests = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const Manager = useSelector(({ Manager }) => Manager);
+  const User = useSelector(({ User }) => User);
   const {
-    tenants,
-    filteredTenants,
-    paginatedTenants,
-    currentTenantPage,
-    totalTenantPages,
-    tenantPerPage,
-    tenantSearch,
-  } = Manager;
+    requests,
+    filteredRequests,
+    paginatedRequests,
+    currentRequestPage,
+    totalRequestPages,
+    requestPerPage,
+    requestSearch,
+    currentUser,
+  } = User;
+  const isAdmin = currentUser?.type === "admin";
+  const isManager = currentUser?.type === "manager";
 
-  useEffect(() => {
-    dispatch(getTenants());
-  }, []);
-
-  const onEdit = (tenant) => {
-    const data = tenant;
-    delete data.password;
+  const onEdit = (request) => {
+    let { category, _id, description, apartment, status, handymen } = request;
+    const handymenUser = handymen?.length >= 1 ? handymen[0] : null;
+    status = status === "closed";
+    const data = {
+      category,
+      _id,
+      description,
+      apartment,
+      status,
+      handymen: handymenUser,
+    };
+    // const data = crew;
+    // delete data.password;
     dispatch(
-      setManager({
-        name: "editTenantForm",
+      setUser({
+        name: "editRequestForm",
         value: data,
       })
     );
-    navigate("/editTenant");
+    navigate("/editRequest");
   };
 
   const onDelete = async (tenant) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You are about to delete this building, you won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Delete Tenant",
-      cancelButtonText: "No",
-    });
-    const tenantId = tenant._id;
-    if (result.isConfirmed) {
-      dispatch(
-        removeTenant({
-          data: {
-            tenantId,
-          },
-        })
-      );
-    }
+    // const result = await Swal.fire({
+    //   title: "Are you sure?",
+    //   text: "You are about to delete this building, you won't be able to revert this!",
+    //   icon: "warning",
+    //   showCancelButton: true,
+    //   confirmButtonColor: "#3085d6",
+    //   cancelButtonColor: "#d33",
+    //   confirmButtonText: "Yes, Delete Tenant",
+    //   cancelButtonText: "No",
+    // });
+    // const tenantId = tenant._id;
+    // if (result.isConfirmed) {
+    //   dispatch(
+    //     removeTenant({
+    //       data: {
+    //         tenantId,
+    //       },
+    //     })
+    //   );
+    // }
   };
 
   const setTotalPages = (totalpages) => {
     dispatch(
-      setManager({
-        name: "totalTenantPages",
+      setUser({
+        name: "totalRequestPages",
         value: totalpages,
       })
     );
   };
   const setCurrentPage = (currentPage) => {
     dispatch(
-      setManager({
-        name: "currentTenantPage",
+      setUser({
+        name: "currentRequestPage",
         value: currentPage,
       })
     );
   };
   const setPaginatedItems = (paginatedItems) => {
     dispatch(
-      setManager({
-        name: "paginatedTenants",
+      setUser({
+        name: "paginatedRequests",
         value: paginatedItems,
       })
     );
@@ -121,8 +137,8 @@ const ViewTenants = () => {
   const handleChangeRowsPerPage = (event) => {
     const value = event.target.value;
     dispatch(
-      setManager({
-        name: "tenantPerPage",
+      setUser({
+        name: "requestPerPage",
         value,
       })
     );
@@ -130,14 +146,20 @@ const ViewTenants = () => {
 
   const onSearch = (e) => {
     const value = e.target.value;
-    dispatch(setSearchTenant(value));
+    dispatch(setSearchRequest(value));
     dispatch(
-      setManager({
-        name: "tenantSearch",
+      setUser({
+        name: "requestSearch",
         value: value,
       })
     );
   };
+
+  useEffect(() => {
+    dispatch(getRequests());
+    if (isAdmin || isManager) dispatch(getCrews());
+  }, []);
+
   return (
     <Fragment>
       <Layout>
@@ -145,17 +167,17 @@ const ViewTenants = () => {
           <Button
             variant="contained"
             className="add-btn"
-            onClick={() => navigate("/addTenant")}
+            onClick={() => navigate("/addRequest")}
           >
             <span>
               <AddIcon />
             </span>
-            Add Tenant
+            Add Request
           </Button>
         </div>
         <Card className="table-card">
           <div className="table-title">
-            <span>Tenants Table</span>
+            <span>Requests Table</span>
             <div>
               <TextField
                 fullWidth
@@ -169,7 +191,7 @@ const ViewTenants = () => {
                   ),
                 }}
                 onChange={onSearch}
-                value={tenantSearch}
+                value={requestSearch}
               />
             </div>
           </div>
@@ -177,32 +199,54 @@ const ViewTenants = () => {
             <table>
               <thead>
                 <th>Building</th>
-                <th>No of Apartments</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone Number</th>
+                <th>Apartment</th>
+                {(isAdmin || isManager) && <th>Handyman</th>}
+                <th>Category</th>
+                <th>Description</th>
+                <th>Status</th>
                 <th>action</th>
               </thead>
               <tbody>
-                {paginatedTenants.map((tenant) => (
+                {paginatedRequests.map((request) => (
                   <Fragment>
                     <tr>
-                      <td>{tenant.building.title}</td>
-                      <td>{tenant.apartmentId?.length}</td>
-                      <td>{tenant.name}</td>
-                      <td>{tenant.email}</td>
-                      <td>{tenant.phoneNumber}</td>
+                      <td>{request.building.title}</td>
+                      <td>{request.apartment.apartmentTitle}</td>
+                      {(isAdmin || isManager) && (
+                        <td>
+                          {request?.handymen.length >= 1
+                            ? request?.handymen[0].name
+                            : "Not Assigned"}
+                        </td>
+                      )}
+                      <td>{request.category}</td>
+                      <td>{request.description}</td>
+                      <td>
+                        <td>
+                          {request.status === "open" ? (
+                            <span className="isNotChecked center">
+                              <CancelIcon />
+                              <span> Open</span>
+                            </span>
+                          ) : (
+                            <span className="isCheck center">
+                              <CheckCircleIcon />
+                              <span> Closed</span>
+                            </span>
+                          )}
+                        </td>
+                      </td>
                       <td>
                         <div className="action-row">
                           <ButtonBase
                             className="action-btn edit"
-                            onClick={() => onEdit(tenant)}
+                            onClick={() => onEdit(request)}
                           >
                             <EditIcon />
                           </ButtonBase>
                           <ButtonBase
                             className="action-btn delete"
-                            onClick={() => onDelete(tenant)}
+                            onClick={() => onDelete(request)}
                           >
                             <DeleteIcon />
                           </ButtonBase>
@@ -215,12 +259,12 @@ const ViewTenants = () => {
             </table>
           </div>
           <Pagination
-            currentPage={currentTenantPage}
+            currentPage={currentRequestPage}
             setCurrentPage={setCurrentPage}
-            items={filteredTenants}
-            totalPages={totalTenantPages}
+            items={filteredRequests}
+            totalPages={totalRequestPages}
             setTotalPages={setTotalPages}
-            itemsPerPage={tenantPerPage}
+            itemsPerPage={requestPerPage}
             setPaginatedItems={setPaginatedItems}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
           />
@@ -231,4 +275,4 @@ const ViewTenants = () => {
   );
 };
 
-export default withDashboard(ViewTenants);
+export default withDashboard(ViewRequests);

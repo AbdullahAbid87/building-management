@@ -28,7 +28,11 @@ import BuildingType from "../../constants/BuildingType";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Autocomplete from "@mui/material/Autocomplete";
-import { editTenant, setEditTenant } from "../../redux/actions/managerAction";
+import {
+  editTenant,
+  getApartments,
+  setEditTenant,
+} from "../../redux/actions/managerAction";
 
 const EditTenant = () => {
   const [showPassword, setshowPassword] = useState(false);
@@ -37,6 +41,10 @@ const EditTenant = () => {
   const [editPasswordDisabled, setEditPasswordDisabled] = useState(false);
   const Admin = useSelector(({ Admin }) => Admin);
   const Manager = useSelector(({ Manager }) => Manager);
+  const User = useSelector(({ User }) => User);
+  const { currentUser } = User;
+  const type = currentUser?.type;
+  const isAdmin = type === "admin";
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { buildings } = Admin;
@@ -64,8 +72,8 @@ const EditTenant = () => {
   };
 
   const onClick = () => {
-    const buildingId = building._id;
-    const apartmentId = apartment._id;
+    const buildingId = building?._id;
+    const apartmentId = apartment.map((item) => item._id);
     const tenantId = _id;
     let data = {
       buildingId,
@@ -88,33 +96,42 @@ const EditTenant = () => {
     );
   };
 
+  useEffect(() => {
+    if (isAdmin) dispatch(getBuildings());
+    dispatch(getApartments());
+  }, []);
+
   return (
     <Fragment>
       <FormLayout>
         <Card>
           <div className="card-title">Edit Tenant</div>
           <div className="card-form-inputs-container">
+            {isAdmin && (
+              <div className="card-form-input">
+                <Autocomplete
+                  options={buildings}
+                  getOptionLabel={(option) => option.title}
+                  name={"building"}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Building" />
+                  )}
+                  onChange={(event, newValue) => {
+                    onChange({
+                      target: {
+                        name: "building",
+                        value: newValue,
+                      },
+                    });
+                  }}
+                  value={building}
+                />
+              </div>
+            )}
+
             <div className="card-form-input">
               <Autocomplete
-                options={buildings}
-                getOptionLabel={(option) => option.title}
-                name={"building"}
-                renderInput={(params) => (
-                  <TextField {...params} label="Building" />
-                )}
-                onChange={(event, newValue) => {
-                  onChange({
-                    target: {
-                      name: "building",
-                      value: newValue,
-                    },
-                  });
-                }}
-                value={building}
-              />
-            </div>
-            <div className="card-form-input">
-              <Autocomplete
+                multiple
                 options={apartments}
                 getOptionLabel={(option) => option.apartmentTitle}
                 name={"apartment"}

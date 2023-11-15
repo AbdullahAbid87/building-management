@@ -1,5 +1,9 @@
 export const BASE_URL = "http://localhost:5000";
+// USER
 export const SET_USER = "SET_USER";
+export const SET_ADD_REQUEST = "SET_ADD_REQUEST";
+export const SET_EDIT_REQUEST = "SET_EDIT_REQUEST";
+export const SET_SEARCH_REQUEST = "SET_SEARCH_REQUEST";
 // ADMIN
 export const SET_ADMIN = "SET_ADMIN";
 export const SET_ADD_BUILDING = "SET_ADD_BUILDING";
@@ -19,3 +23,5 @@ export const SET_EDIT_TENANT = "SET_EDIT_TENANT";
 export const SET_ADD_CREW = "SET_ADD_CREW";
 export const SET_EDIT_CREW = "SET_EDIT_CREW";
 export const SET_SEARCH_CREW = "SET_SEARCH_CREW";
+// GENERAL
+export const CLEAR_STATE = "CLEAR_STATE";

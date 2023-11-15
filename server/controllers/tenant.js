@@ -5,6 +5,7 @@ const passport = require("passport");
 const { validationResult } = require("express-validator");
 const Building = require("../models/Building");
 const Request = require("../models/Request");
+const Apartment = require("../models/Apartment");
 
 const loginTenant = async (req, res, next) => {
   try {
@@ -48,16 +49,221 @@ const logoutTenant = async (req, res) => {
   }
 };
 
-const addRequest = async ({ userId, category, description }) => {
+const addRequest = async ({ userId, apartmentId, category, description }) => {
   try {
+    let user = await User.findById(userId);
+    const buildingId = user.buildingId;
     let requestFields = {
       userId,
+      buildingId,
+      apartmentId,
       category,
       description,
     };
     let request = new Request(requestFields);
     request = await request.save();
     return request;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getRequests = async ({ userId }) => {
+  try {
+    let user = await User.findById(userId);
+
+    const userType = user.type;
+    const isAdmin = userType === "admin";
+    const isManager = userType === "manager";
+    const isCrew = userType === "crew";
+
+    let requests = [];
+    if (isAdmin) {
+      console.log("ADMIN");
+      requests = await Request.aggregate([
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
+          $unwind: "$user",
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "handymenId",
+            foreignField: "_id",
+            as: "handymen",
+          },
+        },
+        {
+          $lookup: {
+            from: "buildings",
+            localField: "user.buildingId",
+            foreignField: "_id",
+            as: "building",
+          },
+        },
+        {
+          $unwind: "$building",
+        },
+        {
+          $lookup: {
+            from: "apartments",
+            localField: "apartmentId",
+            foreignField: "_id",
+            as: "apartment",
+          },
+        },
+        {
+          $unwind: "$apartment",
+        },
+      ]);
+    } else if (isManager) {
+      console.log("MANAGER");
+      const buildingId = user.buildingId;
+      requests = await Request.aggregate([
+        {
+          $match: {
+            buildingId,
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
+          $unwind: "$user",
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "handymenId",
+            foreignField: "_id",
+            as: "handymen",
+          },
+        },
+        {
+          $lookup: {
+            from: "buildings",
+            localField: "user.buildingId",
+            foreignField: "_id",
+            as: "building",
+          },
+        },
+        {
+          $unwind: "$building",
+        },
+        {
+          $lookup: {
+            from: "apartments",
+            localField: "apartmentId",
+            foreignField: "_id",
+            as: "apartment",
+          },
+        },
+        {
+          $unwind: "$apartment",
+        },
+      ]);
+    } else if (isCrew) {
+      console.log("CREW");
+      console.log(userId);
+      requests = await Request.aggregate([
+        {
+          $match: {
+            handymenId: userId, // Match based on the userId passed
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
+          $unwind: "$user",
+        },
+        {
+          $lookup: {
+            from: "buildings",
+            localField: "user.buildingId",
+            foreignField: "_id",
+            as: "building",
+          },
+        },
+        {
+          $unwind: "$building",
+        },
+        {
+          $lookup: {
+            from: "apartments",
+            localField: "apartmentId",
+            foreignField: "_id",
+            as: "apartment",
+          },
+        },
+        {
+          $unwind: "$apartment",
+        },
+      ]);
+    } else {
+      console.log("TENANT");
+      requests = await Request.aggregate([
+        {
+          $match: {
+            userId: userId, // Match based on the userId passed
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
+          $unwind: "$user",
+        },
+        {
+          $lookup: {
+            from: "buildings",
+            localField: "buildingId",
+            foreignField: "_id",
+            as: "building",
+          },
+        },
+        {
+          $unwind: "$building",
+        },
+        {
+          $lookup: {
+            from: "apartments",
+            localField: "apartmentId",
+            foreignField: "_id",
+            as: "apartment",
+          },
+        },
+        {
+          $unwind: "$apartment",
+        },
+      ]);
+    }
+
+    console.log(requests);
+    return requests;
   } catch (error) {
     console.log(error);
     throw error;
@@ -80,23 +286,26 @@ const updateRequest = async ({
     let requestUser = request.userId;
     const user = await User.findById(userId);
     const userType = user.type;
-    if (userType === "tenant") {
+    const isTenant = userType === "tenant";
+    if (isTenant) {
       if (userId.toString() !== requestUser.toString()) {
         throw new Error("Maintainence Request is not yours");
       }
     }
     let requestFields = {};
-    if (category) requestFields.category = category;
     if (description) requestFields.description = description;
-    if (handymenId) {
-      const handymen = await User.findById(handymenId);
-      if (handymen) {
-        throw new Error("Handyman not found");
+    if (!isTenant) {
+      if (category) requestFields.category = category;
+      if (handymenId) {
+        const type = "crew";
+        const handymen = await User.findOne({ handymenId, type });
+        if (handymen) {
+          throw new Error("Handyman not found");
+        }
+        requestFields.handymenId = handymenId;
       }
-      requestFields.handymenId = handymenId;
+      if (status) requestFields.status = status;
     }
-    if (status) requestFields.status = status;
-
     request = await Request.findByIdAndUpdate(
       requestId,
       {
@@ -113,12 +322,19 @@ const updateRequest = async ({
   }
 };
 
-const getRequests = async ({ userId }) => {
+const getApartments = async ({ userId }) => {
   try {
-    const requests = await Request.find({ userId });
-    return requests;
+    const user = await User.findById(userId);
+    const apartmentIds = user.apartmentId;
+    let apartments = [];
+    if (apartmentIds) {
+      apartments = await Apartment.find({
+        _id: { $in: apartmentIds },
+      });
+    }
+    return apartments;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 };
@@ -129,4 +345,5 @@ module.exports = {
   addRequest,
   updateRequest,
   getRequests,
+  getApartments,
 };

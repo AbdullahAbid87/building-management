@@ -6,6 +6,16 @@ const RequestSchema = mongoose.Schema({
     ref: "user",
     required: true,
   },
+  buildingId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "building",
+    required: true,
+  },
+  apartmentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "apartment",
+    required: true,
+  },
   handymenId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",

@@ -16,8 +16,25 @@ const isAuthManagerOrHigher = (req, res, next) => {
   }
 };
 
-const isAuthTenant = (req, res, next) => {
-  if (req.isAuthenticated("tenant")) {
+const isAuthCrewOrHigher = (req, res, next) => {
+  if (
+    req.isAuthenticated("admin") ||
+    req.isAuthenticated("manager") ||
+    req.isAuthenticated("crew")
+  ) {
+    return next();
+  } else {
+    return res.status(401).json({ errorMsg: "Unauthorized Access" });
+  }
+};
+
+const isAuthTenantOrHigher = (req, res, next) => {
+  if (
+    req.isAuthenticated("admin") ||
+    req.isAuthenticated("manager") ||
+    req.isAuthenticated("crew") ||
+    req.isAuthenticated("tenant")
+  ) {
     return next();
   } else {
     return res.status(401).json({ errorMsg: "Unauthorized Access" });
@@ -27,5 +44,6 @@ const isAuthTenant = (req, res, next) => {
 module.exports = {
   isAuthenticatedAdmin,
   isAuthManagerOrHigher,
-  isAuthTenant,
+  isAuthCrewOrHigher,
+  isAuthTenantOrHigher,
 };

@@ -1,4 +1,5 @@
 import {
+  CLEAR_STATE,
   SET_ADD_APARTMENT,
   SET_ADD_CREW,
   SET_ADD_TENANT,
@@ -38,7 +39,7 @@ const initialState = {
   // Tenant
   addTenantForm: {
     building: null,
-    apartment: null,
+    apartment: [],
     name: "",
     email: "",
     password: "",
@@ -47,7 +48,7 @@ const initialState = {
   },
   editTenantForm: {
     building: null,
-    apartment: null,
+    apartment: [],
     name: "",
     email: "",
     password: "",
@@ -87,6 +88,7 @@ const initialState = {
   totalCrewPages: 1,
   crewPerPage: 5,
   crewSearch: "",
+  handymans: [],
 };
 
 export default (state = initialState, action) => {
@@ -170,16 +172,14 @@ export default (state = initialState, action) => {
       const value = action.payload;
       const filteredTenants = state.tenants.filter((tenant) => {
         const regex = new RegExp(value, "i");
-        const { name, email, phoneNumber, building, apartment } = tenant;
+        const { name, email, phoneNumber, building } = tenant;
         const { title } = building;
-        const { apartmentTitle } = apartment;
         return (
           value === "" ||
           regex.test(name) ||
           regex.test(email) ||
           regex.test(phoneNumber) ||
-          regex.test(title) ||
-          regex.test(apartmentTitle)
+          regex.test(title)
         );
       });
       return { ...state, filteredTenants, tenantSearch: value };
@@ -200,6 +200,9 @@ export default (state = initialState, action) => {
         );
       });
       return { ...state, filteredCrews, crewSearch: value };
+    }
+    case CLEAR_STATE: {
+      return initialState;
     }
     default:
       return state;

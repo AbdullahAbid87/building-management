@@ -161,3 +161,11 @@ body {
 .justify-flex-end {
   justify-content: flex-end;
 }
+.center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.center span {
+  margin-left: 5px;
+}

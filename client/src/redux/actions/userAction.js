@@ -1,4 +1,12 @@
-import { BASE_URL, SET_USER } from "./types";
+import Swal from "sweetalert2";
+import {
+  BASE_URL,
+  CLEAR_STATE,
+  SET_ADD_REQUEST,
+  SET_EDIT_REQUEST,
+  SET_SEARCH_REQUEST,
+  SET_USER,
+} from "./types";
 import Axios from "axios";
 
 // Set overall Reducer
@@ -43,3 +51,143 @@ export const login =
     }
     dispatch(setLoader(false));
   };
+
+// Login a User
+export const logout =
+  ({ data, navigate }) =>
+  async (dispatch) => {
+    dispatch(setLoader(true));
+    try {
+      const type = data.type;
+      await Axios.get(`${BASE_URL}/api/${type}/logout`, {
+        withCredentials: true,
+      });
+      dispatch({ type: CLEAR_STATE });
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch(setLoader(false));
+  };
+
+// Set add Request
+export const setAddRequest = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: SET_ADD_REQUEST, payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Set edit Request
+export const setEditRequest = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: SET_EDIT_REQUEST, payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Add Request
+export const addRequest =
+  ({ data, navigate }) =>
+  async (dispatch) => {
+    dispatch(setLoader(true));
+    try {
+      await Axios.post(`${BASE_URL}/api/tenant/addRequest`, data, {
+        withCredentials: true,
+      });
+      navigate("/viewRequests");
+      dispatch(getRequests());
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Request Added",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch(setLoader(false));
+  };
+
+// Edit Request
+export const editRequest =
+  ({ data, navigate }) =>
+  async (dispatch) => {
+    dispatch(setLoader(true));
+    try {
+      await Axios.post(`${BASE_URL}/api/tenant/updateRequest`, data, {
+        withCredentials: true,
+      });
+      navigate("/viewRequests");
+      dispatch(getRequests());
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Request Updated",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch(setLoader(false));
+  };
+
+// Get Requests
+export const getRequests = () => async (dispatch) => {
+  dispatch(setLoader(true));
+  try {
+    const resp = await Axios.get(`${BASE_URL}/api/tenant/requests`, {
+      withCredentials: true,
+    });
+    const requests = resp.data.requests;
+    console.log(requests);
+    dispatch(
+      setUser({
+        name: "requests",
+        value: requests,
+      })
+    );
+    dispatch(
+      setUser({
+        name: "filteredRequests",
+        value: requests,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+  }
+  dispatch(setLoader(false));
+};
+
+// Set edit Request
+export const setSearchRequest = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: SET_SEARCH_REQUEST, payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Get Apartments
+export const getApartments = () => async (dispatch) => {
+  dispatch(setLoader(true));
+  try {
+    const resp = await Axios.get(`${BASE_URL}/api/tenant/apartments`, {
+      withCredentials: true,
+    });
+    const apartments = resp.data.apartments;
+    dispatch(
+      setUser({
+        name: "apartments",
+        value: apartments,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+  }
+  dispatch(setLoader(false));
+};

@@ -43,11 +43,13 @@ const EditCrew = () => {
   const [editPasswordDisabled, setEditPasswordDisabled] = useState(false);
   const Admin = useSelector(({ Admin }) => Admin);
   const Manager = useSelector(({ Manager }) => Manager);
+  const User = useSelector(({ User }) => User);
+  const { currentUser } = User;
+  const isAdmin = currentUser?.type === "admin";
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { buildings } = Admin;
   const { editTenantForm, apartments, editCrewForm } = Manager;
-
 
   const {
     building,
@@ -72,7 +74,7 @@ const EditCrew = () => {
   };
 
   const onClick = () => {
-    const buildingId = building._id;
+    const buildingId = building?._id;
     const crewId = _id;
     let data = {
       buildingId,
@@ -101,25 +103,28 @@ const EditCrew = () => {
         <Card>
           <div className="card-title">Edit Crew</div>
           <div className="card-form-inputs-container">
-            <div className="card-form-input">
-              <Autocomplete
-                options={buildings}
-                getOptionLabel={(option) => option.title}
-                name={"building"}
-                renderInput={(params) => (
-                  <TextField {...params} label="Building" />
-                )}
-                onChange={(event, newValue) => {
-                  onChange({
-                    target: {
-                      name: "building",
-                      value: newValue,
-                    },
-                  });
-                }}
-                value={building}
-              />
-            </div>
+            {isAdmin && (
+              <div className="card-form-input">
+                <Autocomplete
+                  options={buildings}
+                  getOptionLabel={(option) => option.title}
+                  name={"building"}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Building" />
+                  )}
+                  onChange={(event, newValue) => {
+                    onChange({
+                      target: {
+                        name: "building",
+                        value: newValue,
+                      },
+                    });
+                  }}
+                  value={building}
+                />
+              </div>
+            )}
+
             <div className="card-form-input">
               <Autocomplete
                 options={Profession}
@@ -266,7 +271,7 @@ const EditCrew = () => {
                 className="card-btn dual"
                 onClick={onClick}
               >
-                Update Tenant
+                Update Crew
               </Button>
             </div>
           </div>

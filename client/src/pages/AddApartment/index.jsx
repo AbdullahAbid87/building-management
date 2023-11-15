@@ -31,7 +31,7 @@ const AddApartment = () => {
     monthlyRent,
   } = addApartmentForm;
 
-  const isAdmin = currentUser.type === "admin";
+  const isAdmin = currentUser?.type === "admin";
 
   const onChange = (e) => {
     const name = e.target.name;
@@ -45,7 +45,7 @@ const AddApartment = () => {
   };
 
   const onClick = () => {
-    const buildingId = building._id;
+    const buildingId = building?._id;
     dispatch(
       addApartment({
         data: {
@@ -71,25 +71,28 @@ const AddApartment = () => {
         <Card>
           <div className="card-title">Add Apartment</div>
           <div className="card-form-inputs-container">
-            <div className="card-form-input">
-              <Autocomplete
-                options={buildings}
-                getOptionLabel={(option) => option.title}
-                name={"building"}
-                renderInput={(params) => (
-                  <TextField {...params} label="Building" />
-                )}
-                onChange={(event, newValue) => {
-                  onChange({
-                    target: {
-                      name: "building",
-                      value: newValue,
-                    },
-                  });
-                }}
-                value={building}
-              />
-            </div>
+            {isAdmin && (
+              <div className="card-form-input">
+                <Autocomplete
+                  options={buildings}
+                  getOptionLabel={(option) => option.title}
+                  name={"building"}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Building" />
+                  )}
+                  onChange={(event, newValue) => {
+                    onChange({
+                      target: {
+                        name: "building",
+                        value: newValue,
+                      },
+                    });
+                  }}
+                  value={building}
+                />
+              </div>
+            )}
+
             <div className="card-form-input">
               <TextField
                 id="outlined-basic"

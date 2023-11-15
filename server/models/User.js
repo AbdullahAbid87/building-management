@@ -5,10 +5,12 @@ const UserSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "building",
   },
-  apartmentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "apartment",
-  },
+  apartmentId: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "apartment",
+    },
+  ],
   name: {
     type: String,
     required: true,

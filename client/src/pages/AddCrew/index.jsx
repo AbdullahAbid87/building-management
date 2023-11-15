@@ -31,7 +31,7 @@ const AddCrew = () => {
   const Admin = useSelector(({ Admin }) => Admin);
   const User = useSelector(({ User }) => User);
   const { currentUser } = User;
-  const isAdmin = currentUser.type === "admin";
+  const isAdmin = currentUser?.type === "admin";
   const { buildings } = Admin;
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -60,7 +60,7 @@ const AddCrew = () => {
   };
 
   const onClick = () => {
-    const buildingId = building._id;
+    const buildingId = building?._id;
     dispatch(
       addCrew({
         data: {

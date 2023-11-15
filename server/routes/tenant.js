@@ -2,13 +2,17 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const { check, validationResult } = require("express-validator");
-const { isAuthenticatedAdmin, isAuthTenant } = require("../util/helper");
+const {
+  isAuthenticatedAdmin,
+  isAuthTenantOrHigher,
+} = require("../util/helper");
 const {
   loginTenant,
   logoutTenant,
   addRequest,
   updateRequest,
   getRequests,
+  getApartments,
 } = require("../controllers/tenant");
 const { ObjectId } = mongoose.Types;
 
@@ -38,18 +42,20 @@ router.post(
     check("category", "Category is required").not().isEmpty(),
     check("description", "Description is required").not().isEmpty(),
   ],
-  isAuthTenant,
+  isAuthTenantOrHigher,
   async (req, res) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      const { category, description } = req.body;
+      const { apartmentId, category, description } = req.body;
       const userIdStr = req.user._id;
       const userId = new ObjectId(userIdStr);
+      const apartment_Id = new ObjectId(apartmentId);
       const request = await addRequest({
         userId,
+        apartmentId: apartment_Id,
         category,
         description,
       });
@@ -64,7 +70,7 @@ router.post(
 //@route    POST api/tenant/updateRequest
 //@desc     Update a Request
 //@access   Private
-router.post("/updateRequest", isAuthTenant, async (req, res) => {
+router.post("/updateRequest", isAuthTenantOrHigher, async (req, res) => {
   try {
     const { requestId, category, description, handymenId, status } = req.body;
     const userIdStr = req.user._id;
@@ -87,12 +93,28 @@ router.post("/updateRequest", isAuthTenant, async (req, res) => {
 //@route    POST api/tenant/requests
 //@desc     Get Requests
 //@access   Private
-router.get("/requests", isAuthTenant, async (req, res) => {
+router.get("/requests", isAuthTenantOrHigher, async (req, res) => {
   try {
     const userIdStr = req.user._id;
     const userId = new ObjectId(userIdStr);
     const requests = await getRequests({ userId });
+    console.log(requests);
     res.json({ requests });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ errorMsg: error.message });
+  }
+});
+
+//@route    POST api/tenant/apartments
+//@desc     Get Apartments
+//@access   Private
+router.get("/apartments", isAuthTenantOrHigher, async (req, res) => {
+  try {
+    const userIdStr = req.user._id;
+    const userId = new ObjectId(userIdStr);
+    const apartments = await getApartments({ userId });
+    res.json({ apartments });
   } catch (error) {
     console.log(error);
     res.status(500).json({ errorMsg: error.message });
