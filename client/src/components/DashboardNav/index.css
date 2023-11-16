@@ -38,3 +38,11 @@
 .dashboard-btn {
   background: linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232));
 }
+.dashboard-navbar-menu {
+  margin-right: 20px;
+}
+.dashboard-navbar-menu svg {
+  font-size: 40px;
+  cursor: pointer;
+  color: rgb(123, 128, 154);
+}

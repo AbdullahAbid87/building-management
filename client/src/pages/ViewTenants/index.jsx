@@ -61,7 +61,8 @@ const ViewTenants = () => {
 
   const onEdit = (tenant) => {
     const data = tenant;
-    delete data.password;
+    data.password = "";
+    data.confirmPassword = "";
     dispatch(
       setManager({
         name: "editTenantForm",

@@ -1,11 +1,72 @@
-import React from "react";
+import React, { useEffect } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import BackgroundImage from "../../assets/profilebackground.jpeg";
 import "./index.css";
 import ProfileImg from "../../assets/profile.jpg";
 import { Button, TextField } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setProfileForm,
+  setUser,
+  updateProfile,
+} from "../../redux/actions/userAction";
 
 const Profile = () => {
+  const User = useSelector(({ User }) => User);
+  const dispatch = useDispatch();
+
+  const { currentUser, profileForm } = User;
+  const { name, email, phoneNumber, type } = profileForm;
+
+  const capitalizeFirstLetter = (string) => {
+    return string.toString().charAt(0).toUpperCase() + string.slice(1);
+  };
+  useEffect(() => {
+    dispatch(
+      setProfileForm({
+        name: "name",
+        value: currentUser.name,
+      })
+    );
+    dispatch(
+      setProfileForm({
+        name: "email",
+        value: currentUser.email,
+      })
+    );
+    dispatch(
+      setProfileForm({
+        name: "phoneNumber",
+        value: currentUser.phoneNumber,
+      })
+    );
+    dispatch(
+      setProfileForm({
+        name: "type",
+        value: capitalizeFirstLetter(currentUser.type),
+      })
+    );
+  }, []);
+  const onClick = () => {
+    dispatch(
+      updateProfile({
+        data: {
+          name,
+          phoneNumber,
+        },
+      })
+    );
+  };
+  const onChange = (e) => {
+    const name = e.target.name;
+    let value = e.target.value;
+    dispatch(
+      setProfileForm({
+        name,
+        value,
+      })
+    );
+  };
   return (
     <div className="profile-container">
       <div className="profile-backgroundImage-container">
@@ -16,8 +77,8 @@ const Profile = () => {
           <div className="profile-info-container">
             <img src={ProfileImg} className="profile-user-img" />
             <div className="profile-info-text-container">
-              <div className="profile-info-role">Admin</div>
-              <div className="profile-info-desc">CEO / Co-Founder</div>
+              <div className="profile-info-role">{type}</div>
+              <div className="profile-info-desc">Profile Form</div>
             </div>
           </div>
           <div className="profile-inputs-container">
@@ -25,20 +86,24 @@ const Profile = () => {
               <div className="profile-input-item">
                 <div className="profile-input-container">
                   <TextField
-                    id="outlined-basic"
                     label="Name"
                     variant="outlined"
                     className="w-100"
+                    value={name}
+                    name="name"
+                    onChange={onChange}
                   />
                 </div>
               </div>
               <div className="profile-input-item">
                 <div className="profile-input-container">
                   <TextField
-                    id="outlined-basic"
                     label="Email"
                     variant="outlined"
                     className="w-100"
+                    value={email}
+                    name="email"
+                    disabled={true}
                   />
                 </div>
               </div>
@@ -47,26 +112,32 @@ const Profile = () => {
               <div className="profile-input-item">
                 <div className="profile-input-container">
                   <TextField
-                    id="outlined-basic"
                     label="Password"
                     variant="outlined"
                     className="w-100"
+                    disabled={true}
                   />
                 </div>
               </div>
               <div className="profile-input-item">
                 <div className="profile-input-container">
                   <TextField
-                    id="outlined-basic"
                     label="Phone Number"
                     variant="outlined"
                     className="w-100"
+                    value={phoneNumber}
+                    name="phoneNumber"
+                    onChange={onChange}
                   />
                 </div>
               </div>
             </div>
             <div className="profile-input-btn-container">
-              <Button variant="contained" className="profile-btn">
+              <Button
+                variant="contained"
+                className="profile-btn"
+                onClick={onClick}
+              >
                 Submit
               </Button>
             </div>

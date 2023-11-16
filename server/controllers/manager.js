@@ -144,16 +144,18 @@ const updateCrew = async ({
 
 const removeCrew = async ({ userId, crewId }) => {
   try {
-    let manager = await User.findById(userId);
-    if (!manager) {
-      throw new Error("Manager not found");
-    }
     let crew = await User.findById(crewId);
     if (!crew) {
-      throw new Error("Manager not found");
+      throw new Error("Crew Member is not found");
     }
-    if (manager.buildingId.toString() !== crew.buildingId.toString()) {
-      throw new Error("Crew Member is not of your building");
+    let organizer = await User.findById(userId);
+    const isAdmin = organizer.type === "admin";
+    if (!isAdmin) {
+      const organizersBuildingId = organizer.buildingId;
+      const crewBuildingId = crew.buildingId;
+      if (organizersBuildingId.toString() !== crewBuildingId) {
+        throw new Error("Crew Member is not of your building");
+      }
     }
     await User.findByIdAndRemove(crewId);
   } catch (error) {

@@ -80,7 +80,6 @@ const getRequests = async ({ userId }) => {
 
     let requests = [];
     if (isAdmin) {
-      console.log("ADMIN");
       requests = await Request.aggregate([
         {
           $lookup: {
@@ -125,7 +124,6 @@ const getRequests = async ({ userId }) => {
         },
       ]);
     } else if (isManager) {
-      console.log("MANAGER");
       const buildingId = user.buildingId;
       requests = await Request.aggregate([
         {
@@ -176,8 +174,6 @@ const getRequests = async ({ userId }) => {
         },
       ]);
     } else if (isCrew) {
-      console.log("CREW");
-      console.log(userId);
       requests = await Request.aggregate([
         {
           $match: {
@@ -219,7 +215,6 @@ const getRequests = async ({ userId }) => {
         },
       ]);
     } else {
-      console.log("TENANT");
       requests = await Request.aggregate([
         {
           $match: {
@@ -322,6 +317,32 @@ const updateRequest = async ({
   }
 };
 
+const updateProfile = async ({ userId, name, phoneNumber }) => {
+  try {
+    let user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    let userFields = {};
+    if (name) userFields.name = name;
+    if (phoneNumber) userFields.phoneNumber = phoneNumber;
+
+    user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: userFields,
+      },
+      {
+        new: true,
+      }
+    );
+    return user;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 const getApartments = async ({ userId }) => {
   try {
     const user = await User.findById(userId);
@@ -346,4 +367,5 @@ module.exports = {
   updateRequest,
   getRequests,
   getApartments,
+  updateProfile,
 };

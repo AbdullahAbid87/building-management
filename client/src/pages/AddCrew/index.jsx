@@ -24,6 +24,7 @@ import { addCrew, setAddCrew } from "../../redux/actions/managerAction";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
 import Profession from "../../constants/Profession";
+import { isValidEmail } from "../../utils";
 
 const AddCrew = () => {
   const [showPassword, setshowPassword] = useState(false);
@@ -46,6 +47,17 @@ const AddCrew = () => {
     confirmPassword,
     phoneNumber,
   } = addCrewForm;
+  const [errors, setErrors] = useState({
+    building: false,
+    profession: false,
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    phoneNumber: false,
+  });
+  const [errorConfirmPassword, seterrorConfirmPassword] = useState("");
+  const [errorEmail, setErrorEmail] = useState("");
 
   const onChange = (e) => {
     const name = e.target.name;
@@ -57,23 +69,56 @@ const AddCrew = () => {
         value,
       })
     );
+    setErrors({ ...errors, [name]: false });
   };
 
   const onClick = () => {
     const buildingId = building?._id;
-    dispatch(
-      addCrew({
-        data: {
-          buildingId,
-          profession,
-          name,
-          email,
-          password,
-          phoneNumber,
-        },
-        navigate,
-      })
-    );
+    let newErrors = {
+      profession: !profession,
+      name: !name,
+      email: !email,
+      password: !password,
+      confirmPassword: !confirmPassword,
+      phoneNumber: !phoneNumber,
+    };
+    if (isAdmin) {
+      newErrors.building = !building;
+    }
+    // Confirm Password
+    if (confirmPassword.toString().trim() === "") {
+      seterrorConfirmPassword("Confirm Password is requried");
+      newErrors.confirmPassword = true;
+    } else if (password !== confirmPassword) {
+      seterrorConfirmPassword("Password and Confirm Password is requried");
+      newErrors.confirmPassword = true;
+    }
+    // Email
+    if (email.toString().trim() === "") {
+      setErrorEmail("Email is requried");
+      newErrors.email = true;
+    } else if (!isValidEmail(email)) {
+      setErrorEmail("Email is not valid");
+      newErrors.email = true;
+    }
+    const everyFieldFilled = Object.values(newErrors).every((value) => !value);
+    if (everyFieldFilled) {
+      dispatch(
+        addCrew({
+          data: {
+            buildingId,
+            profession,
+            name,
+            email,
+            password,
+            phoneNumber,
+          },
+          navigate,
+        })
+      );
+    } else {
+      setErrors(newErrors);
+    }
   };
 
   return (
@@ -89,7 +134,12 @@ const AddCrew = () => {
                   getOptionLabel={(option) => option.title}
                   name={"building"}
                   renderInput={(params) => (
-                    <TextField {...params} label="Building" />
+                    <TextField
+                      {...params}
+                      label="Building"
+                      error={errors.building}
+                      helperText={errors.building ? "Building is required" : ""}
+                    />
                   )}
                   onChange={(event, newValue) => {
                     onChange({
@@ -109,7 +159,14 @@ const AddCrew = () => {
                 getOptionLabel={(option) => option}
                 name={"profession"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Profession" />
+                  <TextField
+                    {...params}
+                    label="Profession"
+                    error={errors.profession}
+                    helperText={
+                      errors.profession ? "Profession is required" : ""
+                    }
+                  />
                 )}
                 onChange={(event, newValue) => {
                   onChange({
@@ -131,6 +188,8 @@ const AddCrew = () => {
                 name="name"
                 onChange={onChange}
                 value={name}
+                error={errors.name}
+                helperText={errors.name ? "Name is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -141,6 +200,8 @@ const AddCrew = () => {
                 name="email"
                 onChange={onChange}
                 value={email}
+                error={errors.email}
+                helperText={errors.email ? errorEmail : ""}
               />
             </div>
             <div className="card-form-input">
@@ -164,6 +225,8 @@ const AddCrew = () => {
                     </InputAdornment>
                   ),
                 }}
+                error={errors.password}
+                helperText={errors.password ? "Password is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -193,6 +256,8 @@ const AddCrew = () => {
                     </InputAdornment>
                   ),
                 }}
+                error={errors.confirmPassword}
+                helperText={errors.confirmPassword ? errorConfirmPassword : ""}
               />
             </div>
             <div className="card-form-input">
@@ -203,6 +268,10 @@ const AddCrew = () => {
                 name="phoneNumber"
                 onChange={onChange}
                 value={phoneNumber}
+                error={errors.phoneNumber}
+                helperText={
+                  errors.phoneNumber ? "Phone Number is required" : ""
+                }
               />
             </div>
 

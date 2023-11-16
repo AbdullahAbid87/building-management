@@ -172,6 +172,16 @@ export const addManager =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -195,6 +205,16 @@ export const editManager =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -217,6 +237,16 @@ export const removeManager =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -242,6 +272,16 @@ export const getManagers = () => async (dispatch) => {
       })
     );
   } catch (error) {
+    const response = error?.response;
+    const data = response?.data;
+    const errorMsg = data?.errorMsg;
+    if (errorMsg) {
+      Swal.fire({
+        icon: "error",
+        title: "Error Occured",
+        text: errorMsg,
+      });
+    }
     console.log(error);
   }
   dispatch(setLoader(false));

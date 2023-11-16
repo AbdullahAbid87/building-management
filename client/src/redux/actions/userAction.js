@@ -4,6 +4,7 @@ import {
   CLEAR_STATE,
   SET_ADD_REQUEST,
   SET_EDIT_REQUEST,
+  SET_PROFILE_FORM,
   SET_SEARCH_REQUEST,
   SET_USER,
 } from "./types";
@@ -47,6 +48,16 @@ export const login =
       dispatch(setUser({ name: "currentUser", value: currentUser }));
       navigate("/profile");
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -65,6 +76,16 @@ export const logout =
       dispatch({ type: CLEAR_STATE });
       navigate("/");
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -107,6 +128,16 @@ export const addRequest =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -131,6 +162,16 @@ export const editRequest =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -158,6 +199,16 @@ export const getRequests = () => async (dispatch) => {
       })
     );
   } catch (error) {
+    const response = error?.response;
+    const data = response?.data;
+    const errorMsg = data?.errorMsg;
+    if (errorMsg) {
+      Swal.fire({
+        icon: "error",
+        title: "Error Occured",
+        text: errorMsg,
+      });
+    }
     console.log(error);
   }
   dispatch(setLoader(false));
@@ -167,6 +218,15 @@ export const getRequests = () => async (dispatch) => {
 export const setSearchRequest = (data) => async (dispatch) => {
   try {
     dispatch({ type: SET_SEARCH_REQUEST, payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Set Profile Form
+export const setProfileForm = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: SET_PROFILE_FORM, payload: data });
   } catch (error) {
     console.log(error);
   }
@@ -187,7 +247,73 @@ export const getApartments = () => async (dispatch) => {
       })
     );
   } catch (error) {
+    const response = error?.response;
+    const data = response?.data;
+    const errorMsg = data?.errorMsg;
+    if (errorMsg) {
+      Swal.fire({
+        icon: "error",
+        title: "Error Occured",
+        text: errorMsg,
+      });
+    }
     console.log(error);
   }
   dispatch(setLoader(false));
 };
+
+// Update Profile
+export const updateProfile =
+  ({ data }) =>
+  async (dispatch) => {
+    dispatch(setLoader(true));
+    try {
+      const resp = await Axios.post(
+        `${BASE_URL}/api/tenant/updateProfile`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      const user = resp.data.user;
+      dispatch(
+        setUser({
+          name: "currentUser",
+          value: user,
+        })
+      );
+      const { name, phoneNumber } = user;
+      dispatch(
+        setProfileForm({
+          name: "name",
+          value: name,
+        })
+      );
+      dispatch(
+        setProfileForm({
+          name: "phoneNumber",
+          value: phoneNumber,
+        })
+      );
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Profile Updated",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
+      console.log(error);
+    }
+    dispatch(setLoader(false));
+  };

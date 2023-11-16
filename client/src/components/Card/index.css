@@ -10,3 +10,15 @@
   box-sizing: border-box;
   position: relative;
 }
+@media (min-width: 768px) and (max-width: 1080px) {
+  .card {
+    width: 90%;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 813px) {
+  .card {
+    width: 90%;
+  }
+}

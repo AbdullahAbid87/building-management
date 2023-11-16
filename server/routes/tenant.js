@@ -13,6 +13,7 @@ const {
   updateRequest,
   getRequests,
   getApartments,
+  updateProfile,
 } = require("../controllers/tenant");
 const { ObjectId } = mongoose.Types;
 
@@ -84,6 +85,26 @@ router.post("/updateRequest", isAuthTenantOrHigher, async (req, res) => {
       status,
     });
     res.json({ request });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ errorMsg: error.message });
+  }
+});
+
+//@route    POST api/tenant/updateProfile
+//@desc     Update a Request
+//@access   Private
+router.post("/updateProfile", isAuthTenantOrHigher, async (req, res) => {
+  try {
+    const { name, phoneNumber } = req.body;
+    const userIdStr = req.user._id;
+    const userId = new ObjectId(userIdStr);
+    const user = await updateProfile({
+      userId,
+      name,
+      phoneNumber,
+    });
+    res.json({ user });
   } catch (error) {
     console.log(error);
     res.status(500).json({ errorMsg: error.message });

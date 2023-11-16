@@ -26,14 +26,26 @@ import { useNavigate } from "react-router-dom";
 import BuildingType from "../../constants/BuildingType";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import NumberTextField from "../../components/NumberTextField";
+import { isValidEmail } from "../../utils";
 
 const AddManager = () => {
   const [showPassword, setshowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const Admin = useSelector(({ Admin }) => Admin);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const [errors, setErrors] = useState({
+    building: false,
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    phoneNumber: false,
+  });
+  const [errorConfirmPassword, seterrorConfirmPassword] = useState("");
+  const [errorEmail, setErrorEmail] = useState("");
   const { addManagerForm, buildings } = Admin;
   const { name, email, password, confirmPassword, phoneNumber, building } =
     addManagerForm;
@@ -48,22 +60,52 @@ const AddManager = () => {
         value,
       })
     );
+    setErrors({ ...errors, [name]: false });
   };
 
   const onClick = () => {
-    const buildingId = building._id;
-    dispatch(
-      addManager({
-        data: {
-          buildingId,
-          name,
-          email,
-          password,
-          phoneNumber,
-        },
-        navigate,
-      })
-    );
+    let newErrors = {
+      building: !building,
+      name: !name,
+      email: !email,
+      password: !password,
+      confirmPassword: !confirmPassword,
+      phoneNumber: !phoneNumber,
+    };
+    // Confirm Password
+    if (confirmPassword.toString().trim() === "") {
+      seterrorConfirmPassword("Confirm Password is requried");
+      newErrors.confirmPassword = true;
+    } else if (password !== confirmPassword) {
+      seterrorConfirmPassword("Password and Confirm Password is requried");
+      newErrors.confirmPassword = true;
+    }
+    // Email
+    if (email.toString().trim() === "") {
+      setErrorEmail("Email is requried");
+      newErrors.email = true;
+    } else if (!isValidEmail(email)) {
+      setErrorEmail("Email is not valid");
+      newErrors.email = true;
+    }
+    const everyFieldFilled = Object.values(newErrors).every((value) => !value);
+    if (everyFieldFilled) {
+      const buildingId = building._id;
+      dispatch(
+        addManager({
+          data: {
+            buildingId,
+            name,
+            email,
+            password,
+            phoneNumber,
+          },
+          navigate,
+        })
+      );
+    } else {
+      setErrors(newErrors);
+    }
   };
 
   useEffect(() => {
@@ -82,7 +124,12 @@ const AddManager = () => {
                 getOptionLabel={(option) => option.title}
                 name={"building"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Building" />
+                  <TextField
+                    {...params}
+                    label="Building"
+                    error={errors.building}
+                    helperText={errors.building ? "Building is required" : ""}
+                  />
                 )}
                 onChange={(event, newValue) => {
                   onChange({
@@ -103,6 +150,8 @@ const AddManager = () => {
                 name="name"
                 onChange={onChange}
                 value={name}
+                error={errors.name}
+                helperText={errors.name ? "Name is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -113,6 +162,8 @@ const AddManager = () => {
                 name="email"
                 onChange={onChange}
                 value={email}
+                error={errors.email}
+                helperText={errors.email ? errorEmail : ""}
               />
             </div>
             <div className="card-form-input">
@@ -136,6 +187,8 @@ const AddManager = () => {
                     </InputAdornment>
                   ),
                 }}
+                error={errors.password}
+                helperText={errors.password ? "Password is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -165,16 +218,22 @@ const AddManager = () => {
                     </InputAdornment>
                   ),
                 }}
+                error={errors.confirmPassword}
+                helperText={errors.confirmPassword ? errorConfirmPassword : ""}
               />
             </div>
             <div className="card-form-input">
-              <TextField
+              <NumberTextField
                 label="Phone Number"
                 variant="outlined"
                 className="w-100"
                 name="phoneNumber"
                 onChange={onChange}
                 value={phoneNumber}
+                error={errors.phoneNumber}
+                helperText={
+                  errors.phoneNumber ? "Phone Number is required" : ""
+                }
               />
             </div>
 

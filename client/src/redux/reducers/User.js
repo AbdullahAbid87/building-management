@@ -2,6 +2,7 @@ import {
   CLEAR_STATE,
   SET_ADD_REQUEST,
   SET_EDIT_REQUEST,
+  SET_PROFILE_FORM,
   SET_SEARCH_REQUEST,
   SET_USER,
 } from "../actions/types";
@@ -11,6 +12,7 @@ const initialState = {
   selectedType: "admin",
   currentUser: null,
   isLoading: false,
+  sidebarOpen: true,
   // Tenant
   addRequestForm: {
     apartment: null,
@@ -33,6 +35,12 @@ const initialState = {
   requestPerPage: 5,
   requestSearch: "",
   apartments: [],
+  profileForm: {
+    name: "",
+    email: "",
+    type: "",
+    phoneNumber: "",
+  },
 };
 
 export default (state = initialState, action) => {
@@ -41,6 +49,15 @@ export default (state = initialState, action) => {
       return {
         ...state,
         [action.payload.name]: action.payload.value,
+      };
+    }
+    case SET_PROFILE_FORM: {
+      return {
+        ...state,
+        profileForm: {
+          ...state.profileForm,
+          [action.payload.name]: action.payload.value,
+        },
       };
     }
     case SET_ADD_REQUEST: {

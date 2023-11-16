@@ -35,6 +35,8 @@ import {
   setEditTenant,
 } from "../../redux/actions/managerAction";
 import Profession from "../../constants/Profession";
+import { isValidEmail } from "../../utils";
+import NumberTextField from "../../components/NumberTextField";
 
 const EditCrew = () => {
   const [showPassword, setshowPassword] = useState(false);
@@ -61,6 +63,17 @@ const EditCrew = () => {
     phoneNumber,
     _id,
   } = editCrewForm;
+  const [errors, setErrors] = useState({
+    building: false,
+    profession: false,
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    phoneNumber: false,
+  });
+  const [errorConfirmPassword, seterrorConfirmPassword] = useState("");
+  const [errorEmail, setErrorEmail] = useState("");
 
   const onChange = (e) => {
     const name = e.target.name;
@@ -71,6 +84,7 @@ const EditCrew = () => {
         value,
       })
     );
+    setErrors({ ...errors, [name]: false });
   };
 
   const onClick = () => {
@@ -83,18 +97,51 @@ const EditCrew = () => {
       name,
       phoneNumber,
     };
+    let newErrors = {
+      profession: !profession,
+      name: !name,
+      phoneNumber: !phoneNumber,
+    };
+    if (isAdmin) {
+      newErrors.building = !building;
+    }
+
     if (editEmailDisabled) {
+      // Email
+      if (email.toString().trim() === "") {
+        setErrorEmail("Email is requried");
+        newErrors.email = true;
+      } else if (!isValidEmail(email)) {
+        setErrorEmail("Email is not valid");
+        newErrors.email = true;
+      }
       data.email = email;
     }
     if (editPasswordDisabled) {
+      // Confirm Password
+      if (password.toString().trim() === "") {
+        newErrors.password = true;
+      }
+      if (confirmPassword.toString().trim() === "") {
+        seterrorConfirmPassword("Confirm Password is requried");
+        newErrors.confirmPassword = true;
+      } else if (password !== confirmPassword) {
+        seterrorConfirmPassword("Password and Confirm Password is requried");
+        newErrors.confirmPassword = true;
+      }
       data.password = password;
     }
-    dispatch(
-      editCrew({
-        data,
-        navigate,
-      })
-    );
+    const everyFieldFilled = Object.values(newErrors).every((value) => !value);
+    if (everyFieldFilled) {
+      dispatch(
+        editCrew({
+          data,
+          navigate,
+        })
+      );
+    } else {
+      setErrors(newErrors);
+    }
   };
 
   return (
@@ -110,7 +157,12 @@ const EditCrew = () => {
                   getOptionLabel={(option) => option.title}
                   name={"building"}
                   renderInput={(params) => (
-                    <TextField {...params} label="Building" />
+                    <TextField
+                      {...params}
+                      label="Building"
+                      error={errors.building}
+                      helperText={errors.building ? "Building is required" : ""}
+                    />
                   )}
                   onChange={(event, newValue) => {
                     onChange({
@@ -131,7 +183,14 @@ const EditCrew = () => {
                 getOptionLabel={(option) => option}
                 name={"profession"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Profession" />
+                  <TextField
+                    {...params}
+                    label="Profession"
+                    error={errors.profession}
+                    helperText={
+                      errors.profession ? "Profession is required" : ""
+                    }
+                  />
                 )}
                 onChange={(event, newValue) => {
                   onChange({
@@ -152,6 +211,8 @@ const EditCrew = () => {
                 name="name"
                 onChange={onChange}
                 value={name}
+                error={errors.name}
+                helperText={errors.name ? "Name is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -163,6 +224,8 @@ const EditCrew = () => {
                 onChange={onChange}
                 value={email}
                 disabled={!editEmailDisabled}
+                error={errors.email}
+                helperText={errors.email ? errorEmail : ""}
               />
             </div>
             <div className="card-form-input switch justify-flex-end">
@@ -173,7 +236,10 @@ const EditCrew = () => {
                   inputProps={{ "aria-label": "controlled" }}
                   name="parkingAvailability"
                   checked={editEmailDisabled}
-                  onChange={() => setEditEmailDisabled(!editEmailDisabled)}
+                  onChange={() => {
+                    setEditEmailDisabled(!editEmailDisabled);
+                    setErrors({ ...errors, email: false });
+                  }}
                 />
               </div>
               <span className="switch-value-label">Yes</span>
@@ -200,6 +266,8 @@ const EditCrew = () => {
                     </InputAdornment>
                   ),
                 }}
+                error={errors.password}
+                helperText={errors.password ? "Password is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -230,6 +298,8 @@ const EditCrew = () => {
                     </InputAdornment>
                   ),
                 }}
+                error={errors.confirmPassword}
+                helperText={errors.confirmPassword ? errorConfirmPassword : ""}
               />
             </div>
             <div className="card-form-input switch justify-flex-end">
@@ -240,21 +310,30 @@ const EditCrew = () => {
                   inputProps={{ "aria-label": "controlled" }}
                   name="parkingAvailability"
                   checked={editPasswordDisabled}
-                  onChange={() =>
-                    setEditPasswordDisabled(!editPasswordDisabled)
-                  }
+                  onChange={() => {
+                    setEditPasswordDisabled(!editPasswordDisabled);
+                    setErrors({
+                      ...errors,
+                      password: false,
+                      confirmPassword: false,
+                    });
+                  }}
                 />
               </div>
               <span className="switch-value-label">Yes</span>
             </div>
             <div className="card-form-input">
-              <TextField
+              <NumberTextField
                 label="Phone Number"
                 variant="outlined"
                 className="w-100"
                 name="phoneNumber"
                 onChange={onChange}
                 value={phoneNumber}
+                error={errors.phoneNumber}
+                helperText={
+                  errors.phoneNumber ? "Phone Number is required" : ""
+                }
               />
             </div>
 

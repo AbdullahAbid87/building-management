@@ -64,7 +64,16 @@ const ViewManagers = () => {
 
   const onEdit = (manager) => {
     let { _id, name, email, phoneNumber, building } = manager;
-    const data = { name, email, phoneNumber, building, _id };
+
+    const data = {
+      name,
+      email,
+      phoneNumber,
+      building,
+      _id,
+      password: "",
+      confirmPassword: "",
+    };
     dispatch(
       setAdmin({
         name: "editManagerForm",

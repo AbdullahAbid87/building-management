@@ -10,6 +10,7 @@ body {
   font-family: sans-serif;
   background-color: rgb(240, 242, 245);
   font-family: Roboto, sans-serif;
+  overflow-x: hidden;
 }
 .input {
   width: 100%;
@@ -38,6 +39,7 @@ body {
 .card-btn-container.dual {
   justify-content: space-between;
 }
+
 .card-btn {
   width: 100%;
   transition: all 0.4s ease-in-out;
@@ -168,4 +170,15 @@ body {
 }
 .center span {
   margin-left: 5px;
+}
+
+/* Mobile devices */
+@media (max-width: 813px) {
+  .card-btn-container.dual {
+    flex-direction: column-reverse;
+  }
+  .card-btn.dual {
+    width: 100%;
+    margin-top: 20px;
+  }
 }

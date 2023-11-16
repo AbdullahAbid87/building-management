@@ -61,6 +61,16 @@ export const getApartments = () => async (dispatch) => {
       })
     );
   } catch (error) {
+    const response = error?.response;
+    const data = response?.data;
+    const errorMsg = data?.errorMsg;
+    if (errorMsg) {
+      Swal.fire({
+        icon: "error",
+        title: "Error Occured",
+        text: errorMsg,
+      });
+    }
     console.log(error);
   }
   dispatch(setLoader(false));
@@ -84,6 +94,16 @@ export const addApartment =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -107,6 +127,16 @@ export const editApartment =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -129,6 +159,16 @@ export const removeApartment =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -169,6 +209,16 @@ export const addTenant =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -194,6 +244,16 @@ export const getTenants = () => async (dispatch) => {
       })
     );
   } catch (error) {
+    const response = error?.response;
+    const data = response?.data;
+    const errorMsg = data?.errorMsg;
+    if (errorMsg) {
+      Swal.fire({
+        icon: "error",
+        title: "Error Occured",
+        text: errorMsg,
+      });
+    }
     console.log(error);
   }
   dispatch(setLoader(false));
@@ -217,6 +277,16 @@ export const editTenant =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -239,6 +309,16 @@ export const removeTenant =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -286,6 +366,16 @@ export const addCrew =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -309,6 +399,48 @@ export const editCrew =
         timer: 1500,
       });
     } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
+      console.log(error);
+    }
+    dispatch(setLoader(false));
+  };
+
+export const removeCrew =
+  ({ data }) =>
+  async (dispatch) => {
+    dispatch(setLoader(true));
+    try {
+      await Axios.post(`${BASE_URL}/api/manager/removeCrew`, data, {
+        withCredentials: true,
+      });
+      dispatch(getCrews());
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Crew Deleted",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      const response = error?.response;
+      const data = response?.data;
+      const errorMsg = data?.errorMsg;
+      if (errorMsg) {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occured",
+          text: errorMsg,
+        });
+      }
       console.log(error);
     }
     dispatch(setLoader(false));
@@ -334,6 +466,16 @@ export const getCrews = () => async (dispatch) => {
       })
     );
   } catch (error) {
+    const response = error?.response;
+    const data = response?.data;
+    const errorMsg = data?.errorMsg;
+    if (errorMsg) {
+      Swal.fire({
+        icon: "error",
+        title: "Error Occured",
+        text: errorMsg,
+      });
+    }
     console.log(error);
   }
   dispatch(setLoader(false));

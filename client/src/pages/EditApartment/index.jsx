@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
@@ -13,6 +13,7 @@ import {
   setAddApartment,
   setEditApartment,
 } from "../../redux/actions/managerAction";
+import NumberTextField from "../../components/NumberTextField";
 
 const EditApartment = () => {
   const Admin = useSelector(({ Admin }) => Admin);
@@ -20,6 +21,14 @@ const EditApartment = () => {
   const Manager = useSelector(({ Manager }) => Manager);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({
+    building: false,
+    apartmentTitle: false,
+    numberOfBathrooms: false,
+    numberOfBedrooms: false,
+    floorLevel: false,
+    monthlyRent: false,
+  });
 
   const { buildings } = Admin;
   const { currentUser } = User;
@@ -45,25 +54,41 @@ const EditApartment = () => {
         value,
       })
     );
+    setErrors({ ...errors, [name]: false });
   };
 
   const onClick = () => {
+    let newErrors = {
+      apartmentTitle: !apartmentTitle,
+      numberOfBathrooms: !numberOfBathrooms,
+      numberOfBedrooms: !numberOfBedrooms,
+      floorLevel: !floorLevel,
+      monthlyRent: !monthlyRent,
+    };
+    if (isAdmin) {
+      newErrors.building = !building;
+    }
+    const everyFieldFilled = Object.values(newErrors).every((value) => !value);
     const buildingId = building?._id;
     const apartmentId = _id;
-    dispatch(
-      editApartment({
-        data: {
-          apartmentId,
-          buildingId,
-          apartmentTitle,
-          numberOfBedrooms,
-          numberOfBathrooms,
-          floorLevel,
-          monthlyRent,
-        },
-        navigate,
-      })
-    );
+    if (everyFieldFilled) {
+      dispatch(
+        editApartment({
+          data: {
+            apartmentId,
+            buildingId,
+            apartmentTitle,
+            numberOfBedrooms,
+            numberOfBathrooms,
+            floorLevel,
+            monthlyRent,
+          },
+          navigate,
+        })
+      );
+    } else {
+      setErrors(newErrors);
+    }
   };
 
   useEffect(() => {
@@ -83,7 +108,12 @@ const EditApartment = () => {
                   getOptionLabel={(option) => option.title}
                   name={"building"}
                   renderInput={(params) => (
-                    <TextField {...params} label="Building" />
+                    <TextField
+                      {...params}
+                      label="Building"
+                      error={errors.building}
+                      helperText={errors.building ? "Building is required" : ""}
+                    />
                   )}
                   onChange={(event, newValue) => {
                     onChange({
@@ -107,10 +137,14 @@ const EditApartment = () => {
                 name="apartmentTitle"
                 onChange={onChange}
                 value={apartmentTitle}
+                error={errors.apartmentTitle}
+                helperText={
+                  errors.apartmentTitle ? "Apartment Title is required" : ""
+                }
               />
             </div>
             <div className="card-form-input">
-              <TextField
+              <NumberTextField
                 id="outlined-basic"
                 label="Number of Bedrooms"
                 variant="outlined"
@@ -118,10 +152,16 @@ const EditApartment = () => {
                 name="numberOfBedrooms"
                 onChange={onChange}
                 value={numberOfBedrooms}
+                error={errors.numberOfBedrooms}
+                helperText={
+                  errors.numberOfBedrooms
+                    ? "Number of BedRooms is required"
+                    : ""
+                }
               />
             </div>
             <div className="card-form-input">
-              <TextField
+              <NumberTextField
                 id="outlined-basic"
                 label="Number of Bathrooms"
                 variant="outlined"
@@ -129,10 +169,16 @@ const EditApartment = () => {
                 name="numberOfBathrooms"
                 onChange={onChange}
                 value={numberOfBathrooms}
+                error={errors.numberOfBathrooms}
+                helperText={
+                  errors.numberOfBathrooms
+                    ? "Number of BathRooms is required"
+                    : ""
+                }
               />
             </div>
             <div className="card-form-input">
-              <TextField
+              <NumberTextField
                 id="outlined-basic"
                 label="Floor Level"
                 variant="outlined"
@@ -140,10 +186,14 @@ const EditApartment = () => {
                 name="floorLevel"
                 onChange={onChange}
                 value={floorLevel}
+                error={errors.floorLevel}
+                helperText={
+                  errors.floorLevel ? "Level of Floors is required" : ""
+                }
               />
             </div>
             <div className="card-form-input">
-              <TextField
+              <NumberTextField
                 id="outlined-basic"
                 label="Monthly Rent"
                 variant="outlined"
@@ -151,6 +201,10 @@ const EditApartment = () => {
                 name="monthlyRent"
                 onChange={onChange}
                 value={monthlyRent}
+                error={errors.monthlyRent}
+                helperText={
+                  errors.monthlyRent ? "Monthly Rent is required" : ""
+                }
               />
             </div>
             <div className="card-btn-container dual">

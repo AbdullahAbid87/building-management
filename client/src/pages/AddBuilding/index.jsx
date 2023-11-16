@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
@@ -17,9 +17,17 @@ import Loader from "../../components/Loader";
 import { addBuilding, setAddBuilding } from "../../redux/actions/adminAction";
 import { useNavigate } from "react-router-dom";
 import BuildingType from "../../constants/BuildingType";
+import { isNumber } from "../../utils/index";
+import NumberTextField from "../../components/NumberTextField";
 
 const AddBuilding = () => {
   const Admin = useSelector(({ Admin }) => Admin);
+  const [errors, setErrors] = useState({
+    title: false,
+    address: false,
+    numberOfFloors: false,
+    type: false,
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -29,14 +37,18 @@ const AddBuilding = () => {
 
   const onChange = (e) => {
     const name = e.target.name;
-    const value = e.target.value;
-    console.log(value);
+    let value = e.target.value;
+    console.log(e.target);
+    if (!isNumber(value)) {
+      return;
+    }
     dispatch(
       setAddBuilding({
         name,
         value,
       })
     );
+    setErrors({ ...errors, [name]: false });
   };
   const toggleSwitch = (e) => {
     dispatch(
@@ -48,18 +60,29 @@ const AddBuilding = () => {
   };
 
   const onClick = () => {
-    dispatch(
-      addBuilding({
-        data: {
-          title,
-          address,
-          type,
-          numberOfFloors: parseInt(numberOfFloors),
-          parkingAvailability,
-        },
-        navigate,
-      })
-    );
+    const newErrors = {
+      title: !title,
+      address: !address,
+      numberOfFloors: !numberOfFloors,
+      type: !type,
+    };
+    const everyFieldFilled = Object.values(newErrors).every((value) => !value);
+    if (everyFieldFilled) {
+      dispatch(
+        addBuilding({
+          data: {
+            title,
+            address,
+            type,
+            numberOfFloors: parseInt(numberOfFloors),
+            parkingAvailability,
+          },
+          navigate,
+        })
+      );
+    } else {
+      setErrors(newErrors);
+    }
   };
 
   return (
@@ -76,6 +99,8 @@ const AddBuilding = () => {
                 name="title"
                 onChange={onChange}
                 value={title}
+                error={errors.title}
+                helperText={errors.title ? "Title is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -86,6 +111,8 @@ const AddBuilding = () => {
                 name="address"
                 onChange={onChange}
                 value={address}
+                error={errors.address}
+                helperText={errors.address ? "Address is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -94,7 +121,12 @@ const AddBuilding = () => {
                 getOptionLabel={(option) => option}
                 name={"type"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Building Type" />
+                  <TextField
+                    {...params}
+                    label="Building Type"
+                    error={errors.type}
+                    helperText={errors.type ? "Building Type is required" : ""}
+                  />
                 )}
                 onChange={(event, newValue) => {
                   onChange({
@@ -108,13 +140,18 @@ const AddBuilding = () => {
               />
             </div>
             <div className="card-form-input">
-              <TextField
+              <NumberTextField
                 label="Number Of Floors"
                 variant="outlined"
                 className="w-100"
                 name="numberOfFloors"
                 onChange={onChange}
                 value={numberOfFloors}
+                error={errors.numberOfFloors}
+                helperText={
+                  errors.numberOfFloors ? "Number of Floors is required" : ""
+                }
+                type={"text"}
               />
             </div>
             <div className="card-form-input switch">

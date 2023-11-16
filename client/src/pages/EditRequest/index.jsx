@@ -48,6 +48,11 @@ const AddRequest = () => {
   const isTenant = currentUser?.type === "tenant";
   const { category, description, handymen, apartment, status, _id } =
     editRequestForm;
+  const [errors, setErrors] = useState({
+    category: false,
+    description: false,
+    apartment: false,
+  });
 
   const onChange = (e) => {
     const name = e.target.name;
@@ -59,18 +64,29 @@ const AddRequest = () => {
         value,
       })
     );
+    setErrors({ ...errors, [name]: false });
   };
 
   const onClick = () => {
     const requestId = _id;
     const handymenId = handymen?._id;
     let _status = status ? "closed" : "open";
-    dispatch(
-      editRequest({
-        data: { requestId, description, status: _status, handymenId },
-        navigate,
-      })
-    );
+    let newErrors = {
+      category: !category,
+      description: !description,
+      apartment: !apartment,
+    };
+    const everyFieldFilled = Object.values(newErrors).every((value) => !value);
+    if (everyFieldFilled) {
+      dispatch(
+        editRequest({
+          data: { requestId, description, status: _status, handymenId },
+          navigate,
+        })
+      );
+    } else {
+      setErrors(newErrors);
+    }
   };
 
   useEffect(() => {}, []);
@@ -89,7 +105,12 @@ const AddRequest = () => {
                 getOptionLabel={(option) => option.apartmentTitle}
                 name={"apartment"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Apartment" />
+                  <TextField
+                    {...params}
+                    label="Apartment"
+                    error={errors.apartment}
+                    helperText={errors.apartment ? "Apartment is required" : ""}
+                  />
                 )}
                 onChange={(event, newValue) => {
                   onChange({
@@ -100,7 +121,7 @@ const AddRequest = () => {
                   });
                 }}
                 value={apartment}
-                disabled={isDisabled}
+                disabled={true}
               />
             </div>
             {(isAdmin || isManager) && (
@@ -131,7 +152,12 @@ const AddRequest = () => {
                 getOptionLabel={(option) => option}
                 name={"category"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Category" />
+                  <TextField
+                    {...params}
+                    label="Category"
+                    error={errors.category}
+                    helperText={errors.category ? "Category is required" : ""}
+                  />
                 )}
                 onChange={(event, newValue) => {
                   onChange({
@@ -156,6 +182,8 @@ const AddRequest = () => {
                 value={description}
                 onChange={onChange}
                 disabled={isDescDisabled}
+                error={errors.description}
+                helperText={errors.description ? "Description is required" : ""}
               />
             </div>
             {!isTenant && (

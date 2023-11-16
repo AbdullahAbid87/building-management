@@ -4,3 +4,14 @@
   padding: 0px 50px;
   margin-top: 50px;
 }
+@media (min-width: 768px) and (max-width: 1080px) {
+  .layout-container {
+    padding: 0px 10px;
+  }
+}
+/* Mobile devices */
+@media (max-width: 813px) {
+  .layout-container {
+    padding: 0px;
+  }
+}

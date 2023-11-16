@@ -28,6 +28,8 @@ import BuildingType from "../../constants/BuildingType";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Autocomplete from "@mui/material/Autocomplete";
+import { isValidEmail } from "../../utils";
+import NumberTextField from "../../components/NumberTextField";
 
 const EditManager = () => {
   const [showPassword, setshowPassword] = useState(false);
@@ -37,6 +39,16 @@ const EditManager = () => {
   const Admin = useSelector(({ Admin }) => Admin);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({
+    building: false,
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    phoneNumber: false,
+  });
+  const [errorConfirmPassword, seterrorConfirmPassword] = useState("");
+  const [errorEmail, setErrorEmail] = useState("");
 
   const { editManagerForm, buildings } = Admin;
   const { name, email, password, confirmPassword, phoneNumber, building, _id } =
@@ -59,10 +71,16 @@ const EditManager = () => {
         value,
       })
     );
+    setErrors({ ...errors, [name]: false });
   };
 
   const onClick = () => {
-    const buildingId = building._id;
+    let newErrors = {
+      building: !building,
+      name: !name,
+      phoneNumber: !phoneNumber,
+    };
+    const buildingId = building?._id;
     const managerId = _id;
 
     let data = {
@@ -72,17 +90,41 @@ const EditManager = () => {
       phoneNumber,
     };
     if (editEmailDisabled) {
+      // Email
+      if (email.toString().trim() === "") {
+        setErrorEmail("Email is requried");
+        newErrors.email = true;
+      } else if (!isValidEmail(email)) {
+        setErrorEmail("Email is not valid");
+        newErrors.email = true;
+      }
       data.email = email;
     }
     if (editPasswordDisabled) {
+      // Confirm Password
+      if (password.toString().trim() === "") {
+        newErrors.password = true;
+      }
+      if (confirmPassword.toString().trim() === "") {
+        seterrorConfirmPassword("Confirm Password is requried");
+        newErrors.confirmPassword = true;
+      } else if (password !== confirmPassword) {
+        seterrorConfirmPassword("Password and Confirm Password is requried");
+        newErrors.confirmPassword = true;
+      }
       data.password = password;
     }
-    dispatch(
-      editManager({
-        data,
-        navigate,
-      })
-    );
+    const everyFieldFilled = Object.values(newErrors).every((value) => !value);
+    if (everyFieldFilled) {
+      dispatch(
+        editManager({
+          data,
+          navigate,
+        })
+      );
+    } else {
+      setErrors(newErrors);
+    }
   };
 
   useEffect(() => {
@@ -101,7 +143,12 @@ const EditManager = () => {
                 getOptionLabel={(option) => option.title}
                 name={"building"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Building" />
+                  <TextField
+                    {...params}
+                    label="Building"
+                    error={errors.building}
+                    helperText={errors.building ? "Building is required" : ""}
+                  />
                 )}
                 onChange={(event, newValue) => {
                   onChange({
@@ -122,6 +169,8 @@ const EditManager = () => {
                 name="name"
                 onChange={onChange}
                 value={name}
+                error={errors.name}
+                helperText={errors.name ? "Name is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -133,6 +182,8 @@ const EditManager = () => {
                 onChange={onChange}
                 value={email}
                 disabled={!editEmailDisabled}
+                error={errors.email}
+                helperText={errors.email ? errorEmail : ""}
               />
             </div>
             <div className="card-form-input switch justify-flex-end">
@@ -141,9 +192,11 @@ const EditManager = () => {
               <div className="switch-container">
                 <Switch
                   inputProps={{ "aria-label": "controlled" }}
-                  name="parkingAvailability"
                   checked={editEmailDisabled}
-                  onChange={() => setEditEmailDisabled(!editEmailDisabled)}
+                  onChange={() => {
+                    setEditEmailDisabled(!editEmailDisabled);
+                    setErrors({ ...errors, email: false });
+                  }}
                 />
               </div>
               <span className="switch-value-label">Yes</span>
@@ -170,6 +223,8 @@ const EditManager = () => {
                     </InputAdornment>
                   ),
                 }}
+                error={errors.password}
+                helperText={errors.password ? "Password is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -200,6 +255,8 @@ const EditManager = () => {
                     </InputAdornment>
                   ),
                 }}
+                error={errors.confirmPassword}
+                helperText={errors.confirmPassword ? errorConfirmPassword : ""}
               />
             </div>
             <div className="card-form-input switch justify-flex-end">
@@ -208,23 +265,31 @@ const EditManager = () => {
               <div className="switch-container">
                 <Switch
                   inputProps={{ "aria-label": "controlled" }}
-                  name="parkingAvailability"
                   checked={editPasswordDisabled}
-                  onChange={() =>
-                    setEditPasswordDisabled(!editPasswordDisabled)
-                  }
+                  onChange={() => {
+                    setEditPasswordDisabled(!editPasswordDisabled);
+                    setErrors({
+                      ...errors,
+                      password: false,
+                      confirmPassword: false,
+                    });
+                  }}
                 />
               </div>
               <span className="switch-value-label">Yes</span>
             </div>
             <div className="card-form-input">
-              <TextField
+              <NumberTextField
                 label="Phone Number"
                 variant="outlined"
                 className="w-100"
                 name="phoneNumber"
                 onChange={onChange}
                 value={phoneNumber}
+                error={errors.phoneNumber}
+                helperText={
+                  errors.phoneNumber ? "Phone Number is required" : ""
+                }
               />
             </div>
 

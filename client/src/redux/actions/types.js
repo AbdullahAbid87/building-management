@@ -4,6 +4,7 @@ export const SET_USER = "SET_USER";
 export const SET_ADD_REQUEST = "SET_ADD_REQUEST";
 export const SET_EDIT_REQUEST = "SET_EDIT_REQUEST";
 export const SET_SEARCH_REQUEST = "SET_SEARCH_REQUEST";
+export const SET_PROFILE_FORM = "SET_PROFILE_FORM";
 // ADMIN
 export const SET_ADMIN = "SET_ADMIN";
 export const SET_ADD_BUILDING = "SET_ADD_BUILDING";

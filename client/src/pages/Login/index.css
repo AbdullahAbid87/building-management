@@ -75,7 +75,7 @@
   margin-top: 30px;
 }
 .login-btn {
-  padding: 15px ;
+  padding: 15px;
   background: rgba(0, 0, 0, 0)
     linear-gradient(195deg, rgb(73, 163, 241), rgb(26, 115, 232)) repeat scroll
     0% 0%;
@@ -119,9 +119,36 @@
   width: 20px;
 }
 .google-btn {
-  background-color: transparent ;
-  border: 1px solid whitesmoke ;
+  background-color: transparent;
+  border: 1px solid whitesmoke;
   color: color(srgb red green blue);
-  padding: 15px ;
+  padding: 15px;
   color: black;
+}
+
+/* Tablets (landscape) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Your tablet-specific styles here */
+  .login-card {
+    width: 75%;
+  }
+  .login-header-title {
+    font-size: 30px;
+  }
+  .login-header-desc {
+    font-size: 18px;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 767px) {
+  .login-card {
+    width: 95%;
+  }
+  .login-header-title {
+    font-size: 24px;
+  }
+  .login-header-desc {
+    font-size: 14px;
+  }
 }

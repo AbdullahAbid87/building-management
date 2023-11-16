@@ -44,8 +44,7 @@ th {
   flex-direction: row;
   align-items: center;
 }
-.user-name {
-}
+
 .table-title {
   padding: 24px 16px;
   opacity: 1;
@@ -68,4 +67,24 @@ th {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+@media (min-width: 768px) and (max-width: 1080px) {
+  table {
+    width: 200%;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 813px) {
+  table {
+    width: 300%;
+  }
+  .table-title {
+    flex-direction: column-reverse;
+    margin-top: -80px;
+  }
+  .table-title span{
+    margin-top: 20px;
+  }
 }

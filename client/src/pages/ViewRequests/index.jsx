@@ -63,6 +63,7 @@ const ViewRequests = () => {
   } = User;
   const isAdmin = currentUser?.type === "admin";
   const isManager = currentUser?.type === "manager";
+  const isTenant = currentUser?.type === "tenant";
 
   const onEdit = (request) => {
     let { category, _id, description, apartment, status, handymen } = request;
@@ -163,18 +164,21 @@ const ViewRequests = () => {
   return (
     <Fragment>
       <Layout>
-        <div className="add-btn-container">
-          <Button
-            variant="contained"
-            className="add-btn"
-            onClick={() => navigate("/addRequest")}
-          >
-            <span>
-              <AddIcon />
-            </span>
-            Add Request
-          </Button>
-        </div>
+        {isTenant && (
+          <div className="add-btn-container">
+            <Button
+              variant="contained"
+              className="add-btn"
+              onClick={() => navigate("/addRequest")}
+            >
+              <span>
+                <AddIcon />
+              </span>
+              Add Request
+            </Button>
+          </div>
+        )}
+
         <Card className="table-card">
           <div className="table-title">
             <span>Requests Table</span>

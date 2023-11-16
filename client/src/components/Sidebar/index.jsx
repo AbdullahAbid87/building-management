@@ -10,14 +10,17 @@ import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import CorporateFareIcon from "@mui/icons-material/CorporateFare";
 import BusinessIcon from "@mui/icons-material/Business";
 import { useLocation, useNavigate } from "react-router-dom";
-import { logout } from "../../redux/actions/userAction";
+import { logout, setUser } from "../../redux/actions/userAction";
 import { useDispatch, useSelector } from "react-redux";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+
 const Sidebar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const User = useSelector(({ User }) => User);
-  const { currentUser } = User;
+  const { currentUser, sidebarOpen } = User;
+
   const type = currentUser?.type;
   const isAdmin = type === "admin";
   const isManager = type === "manager";
@@ -31,23 +34,27 @@ const Sidebar = () => {
       })
     );
   };
+  const toggleSidebar = () => {
+    dispatch(
+      setUser({
+        name: "sidebarOpen",
+        value: !sidebarOpen,
+      })
+    );
+  };
+
   return (
-    <div className="sidebar-container">
+    <div className={`sidebar-container ${sidebarOpen ? "open" : "close"}`}>
       <div className="sidebar-header-title">
         <span>
           <BusinessIcon />
         </span>
         RentHaven
+        <div className="dashboard-navbar-menu navbar-sidebar-icon" onClick={toggleSidebar}>
+          <MenuOpenIcon />
+        </div>
       </div>
       <div className="sidebar-items-container">
-        <div
-          className={`sidebar-item ${pathname === "/dashboard" && "selected"} `}
-        >
-          <span>
-            <DashboardIcon />
-          </span>
-          Dashboard
-        </div>
         <div
           className={`sidebar-item ${pathname === "/profile" && "selected"} `}
           onClick={() => navigate("/profile")}

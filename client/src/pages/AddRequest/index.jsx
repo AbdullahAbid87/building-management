@@ -41,31 +41,46 @@ const AddRequest = () => {
 
   const { addRequestForm, apartments } = User;
   const { category, description, apartment } = addRequestForm;
+  const [errors, setErrors] = useState({
+    category,
+    description,
+    apartment,
+  });
 
   const onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(value);
     dispatch(
       setAddRequest({
         name,
         value,
       })
     );
+    setErrors({ ...errors, [name]: false });
   };
 
   const onClick = () => {
-    const apartmentId = apartment._id;
-    dispatch(
-      addRequest({
-        data: {
-          apartmentId,
-          category,
-          description,
-        },
-        navigate,
-      })
-    );
+    const apartmentId = apartment?._id;
+    let newErrors = {
+      category: !category,
+      description: !description,
+      apartment: !apartment,
+    };
+    const everyFieldFilled = Object.values(newErrors).every((value) => !value);
+    if (everyFieldFilled) {
+      dispatch(
+        addRequest({
+          data: {
+            apartmentId,
+            category,
+            description,
+          },
+          navigate,
+        })
+      );
+    } else {
+      setErrors(newErrors);
+    }
   };
 
   useEffect(() => {
@@ -84,7 +99,12 @@ const AddRequest = () => {
                 getOptionLabel={(option) => option.apartmentTitle}
                 name={"apartment"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Apartment" />
+                  <TextField
+                    {...params}
+                    label="Apartment"
+                    error={errors.apartment}
+                    helperText={errors.apartment ? "Apartment is required" : ""}
+                  />
                 )}
                 onChange={(event, newValue) => {
                   onChange({
@@ -103,7 +123,12 @@ const AddRequest = () => {
                 getOptionLabel={(option) => option}
                 name={"category"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Category" />
+                  <TextField
+                    {...params}
+                    label="Category"
+                    error={errors.category}
+                    helperText={errors.category ? "Category is required" : ""}
+                  />
                 )}
                 onChange={(event, newValue) => {
                   onChange({
@@ -126,6 +151,8 @@ const AddRequest = () => {
                 name={"description"}
                 value={description}
                 onChange={onChange}
+                error={errors.description}
+                helperText={errors.description ? "Description is required" : ""}
               />
             </div>
 

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
@@ -26,6 +26,12 @@ const EditBuilding = () => {
   const Admin = useSelector(({ Admin }) => Admin);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({
+    title: false,
+    address: false,
+    numberOfFloors: false,
+    type: false,
+  });
 
   const { editBuildingForm } = Admin;
   const { _id, title, address, numberOfFloors, parkingAvailability, type } =
@@ -41,6 +47,7 @@ const EditBuilding = () => {
         value,
       })
     );
+    setErrors({ ...errors, [name]: false });
   };
   const toggleSwitch = (e) => {
     dispatch(
@@ -53,19 +60,30 @@ const EditBuilding = () => {
 
   const onClick = () => {
     const buildingId = _id;
-    dispatch(
-      editBuilding({
-        data: {
-          buildingId,
-          title,
-          address,
-          type,
-          numberOfFloors: parseInt(numberOfFloors),
-          parkingAvailability,
-        },
-        navigate,
-      })
-    );
+    const newErrors = {
+      title: !title,
+      address: !address,
+      numberOfFloors: !numberOfFloors,
+      type: !type,
+    };
+    const everyFieldFilled = Object.values(newErrors).every((value) => !value);
+    if (everyFieldFilled) {
+      dispatch(
+        editBuilding({
+          data: {
+            buildingId,
+            title,
+            address,
+            type,
+            numberOfFloors: parseInt(numberOfFloors),
+            parkingAvailability,
+          },
+          navigate,
+        })
+      );
+    } else {
+      setErrors(newErrors);
+    }
   };
 
   return (
@@ -82,6 +100,8 @@ const EditBuilding = () => {
                 name="title"
                 onChange={onChange}
                 value={title}
+                error={errors.title}
+                helperText={errors.title ? "Title is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -92,6 +112,8 @@ const EditBuilding = () => {
                 name="address"
                 onChange={onChange}
                 value={address}
+                error={errors.address}
+                helperText={errors.address ? "Address is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -100,7 +122,12 @@ const EditBuilding = () => {
                 getOptionLabel={(option) => option}
                 name={"type"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Building Type" />
+                  <TextField
+                    {...params}
+                    label="Building Type"
+                    error={errors.type}
+                    helperText={errors.type ? "Building Type is required" : ""}
+                  />
                 )}
                 onChange={(event, newValue) => {
                   onChange({
@@ -121,6 +148,10 @@ const EditBuilding = () => {
                 name="numberOfFloors"
                 onChange={onChange}
                 value={numberOfFloors}
+                error={errors.numberOfFloors}
+                helperText={
+                  errors.numberOfFloors ? "Number of Floors is required" : ""
+                }
               />
             </div>
             <div className="card-form-input switch">

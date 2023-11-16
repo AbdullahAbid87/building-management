@@ -31,6 +31,8 @@ import {
   getApartments,
   setAddTenant,
 } from "../../redux/actions/managerAction";
+import { isValidEmail } from "../../utils";
+import NumberTextField from "../../components/NumberTextField";
 
 const AddTenant = () => {
   const [showPassword, setshowPassword] = useState(false);
@@ -42,6 +44,17 @@ const AddTenant = () => {
   const isAdmin = currentUser?.type === "admin";
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({
+    building: false,
+    apartment: false,
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+    phoneNumber: false,
+  });
+  const [errorConfirmPassword, seterrorConfirmPassword] = useState("");
+  const [errorEmail, setErrorEmail] = useState("");
 
   const { addManagerForm, buildings } = Admin;
   const { addTenantForm, apartments } = Manager;
@@ -65,25 +78,57 @@ const AddTenant = () => {
         value,
       })
     );
+    setErrors({ ...errors, [name]: false });
   };
 
   const onClick = () => {
-    const buildingId = building._id;
+    const buildingId = building?._id;
     const apartmentId = apartment.map((item) => item._id);
-
-    dispatch(
-      addTenant({
-        data: {
-          name,
-          email,
-          password,
-          phoneNumber,
-          buildingId,
-          apartmentId,
-        },
-        navigate,
-      })
-    );
+    let newErrors = {
+      apartment: apartment.length < 1,
+      name: !name,
+      email: !email,
+      password: !password,
+      confirmPassword: !confirmPassword,
+      phoneNumber: !phoneNumber,
+    };
+    if (isAdmin) {
+      newErrors.building = !building;
+    }
+    // Confirm Password
+    if (confirmPassword.toString().trim() === "") {
+      seterrorConfirmPassword("Confirm Password is requried");
+      newErrors.confirmPassword = true;
+    } else if (password !== confirmPassword) {
+      seterrorConfirmPassword("Password and Confirm Password is requried");
+      newErrors.confirmPassword = true;
+    }
+    // Email
+    if (email.toString().trim() === "") {
+      setErrorEmail("Email is requried");
+      newErrors.email = true;
+    } else if (!isValidEmail(email)) {
+      setErrorEmail("Email is not valid");
+      newErrors.email = true;
+    }
+    const everyFieldFilled = Object.values(newErrors).every((value) => !value);
+    if (everyFieldFilled) {
+      dispatch(
+        addTenant({
+          data: {
+            name,
+            email,
+            password,
+            phoneNumber,
+            buildingId,
+            apartmentId,
+          },
+          navigate,
+        })
+      );
+    } else {
+      setErrors(newErrors);
+    }
   };
 
   useEffect(() => {
@@ -104,7 +149,12 @@ const AddTenant = () => {
                   getOptionLabel={(option) => option.title}
                   name={"building"}
                   renderInput={(params) => (
-                    <TextField {...params} label="Building" />
+                    <TextField
+                      {...params}
+                      label="Building"
+                      error={errors.building}
+                      helperText={errors.building ? "Building is required" : ""}
+                    />
                   )}
                   onChange={(event, newValue) => {
                     onChange({
@@ -126,7 +176,12 @@ const AddTenant = () => {
                 getOptionLabel={(option) => option.apartmentTitle}
                 name={"apartment"}
                 renderInput={(params) => (
-                  <TextField {...params} label="Apartment" />
+                  <TextField
+                    {...params}
+                    label="Apartment"
+                    error={errors.apartment}
+                    helperText={errors.apartment ? "Apartment is required" : ""}
+                  />
                 )}
                 onChange={(event, newValue) => {
                   console.log(newValue);
@@ -148,6 +203,8 @@ const AddTenant = () => {
                 name="name"
                 onChange={onChange}
                 value={name}
+                error={errors.name}
+                helperText={errors.name ? "Name is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -158,6 +215,8 @@ const AddTenant = () => {
                 name="email"
                 onChange={onChange}
                 value={email}
+                error={errors.email}
+                helperText={errors.email ? errorEmail : ""}
               />
             </div>
             <div className="card-form-input">
@@ -181,6 +240,8 @@ const AddTenant = () => {
                     </InputAdornment>
                   ),
                 }}
+                error={errors.password}
+                helperText={errors.password ? "Password is required" : ""}
               />
             </div>
             <div className="card-form-input">
@@ -210,16 +271,22 @@ const AddTenant = () => {
                     </InputAdornment>
                   ),
                 }}
+                error={errors.confirmPassword}
+                helperText={errors.confirmPassword ? errorConfirmPassword : ""}
               />
             </div>
             <div className="card-form-input">
-              <TextField
+              <NumberTextField
                 label="Phone Number"
                 variant="outlined"
                 className="w-100"
                 name="phoneNumber"
                 onChange={onChange}
                 value={phoneNumber}
+                error={errors.phoneNumber}
+                helperText={
+                  errors.phoneNumber ? "Phone Number is required" : ""
+                }
               />
             </div>
 

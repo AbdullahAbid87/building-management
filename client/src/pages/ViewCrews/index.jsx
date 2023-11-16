@@ -16,6 +16,7 @@ import {
 import {
   getCrews,
   getTenants,
+  removeCrew,
   removeTenant,
   setManager,
   setSearchCrew,
@@ -48,14 +49,6 @@ const ViewCrews = () => {
   const navigate = useNavigate();
   const Manager = useSelector(({ Manager }) => Manager);
   const {
-    tenants,
-    filteredTenants,
-    paginatedTenants,
-    currentTenantPage,
-    totalTenantPages,
-    tenantPerPage,
-    tenantSearch,
-
     crews,
     filteredCrews,
     paginatedCrews,
@@ -71,7 +64,8 @@ const ViewCrews = () => {
 
   const onEdit = (crew) => {
     const data = crew;
-    delete data.password;
+    data.password = "";
+    data.confirmPassword = "";
     dispatch(
       setManager({
         name: "editCrewForm",
@@ -81,27 +75,27 @@ const ViewCrews = () => {
     navigate("/editCrew");
   };
 
-  const onDelete = async (tenant) => {
-    // const result = await Swal.fire({
-    //   title: "Are you sure?",
-    //   text: "You are about to delete this building, you won't be able to revert this!",
-    //   icon: "warning",
-    //   showCancelButton: true,
-    //   confirmButtonColor: "#3085d6",
-    //   cancelButtonColor: "#d33",
-    //   confirmButtonText: "Yes, Delete Tenant",
-    //   cancelButtonText: "No",
-    // });
-    // const tenantId = tenant._id;
-    // if (result.isConfirmed) {
-    //   dispatch(
-    //     removeTenant({
-    //       data: {
-    //         tenantId,
-    //       },
-    //     })
-    //   );
-    // }
+  const onDelete = async (crew) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to delete this Crew Member, you won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Delete Crew Member",
+      cancelButtonText: "No",
+    });
+    const crewId = crew._id;
+    if (result.isConfirmed) {
+      dispatch(
+        removeCrew({
+          data: {
+            crewId,
+          },
+        })
+      );
+    }
   };
 
   const setTotalPages = (totalpages) => {
