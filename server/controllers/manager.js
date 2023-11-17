@@ -553,6 +553,33 @@ const getTenants = async ({ userId }) => {
   }
 };
 
+const getAvailableApartments = async () => {
+  try {
+    let apartments = [];
+    if (apartments) {
+      apartments = await Apartment.aggregate([
+        {
+          $lookup: {
+            from: "users",
+            localField: "_id",
+            foreignField: "apartmentId",
+            as: "assignedUsers",
+          },
+        },
+        {
+          $match: {
+            assignedUsers: { $size: 0 },
+          },
+        },
+      ]);
+    }
+    return apartments;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 module.exports = {
   loginManager,
   logoutManager,
@@ -568,4 +595,5 @@ module.exports = {
   updateTenant,
   removeTenant,
   getTenants,
+  getAvailableApartments,
 };

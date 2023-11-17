@@ -1,9 +1,7 @@
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import Card from "../../components/Card";
-import Table from "../../components/Table";
 import Layout from "../../components/Layout";
-import Avatar from "../../assets/Avatar.jpg";
 import "./index.css";
 import { useEffect } from "react";
 import {
@@ -17,22 +15,13 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  ButtonBase,
-  Button,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  TextField,
-} from "@mui/material";
+import { ButtonBase, Button, InputAdornment, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Loader from "../../components/Loader";
 import Pagination from "../../components/Pagination";
 import SearchIcon from "@mui/icons-material/Search";
-import styled from "@emotion/styled";
 
 const ViewBuildings = () => {
   const dispatch = useDispatch();
@@ -49,6 +38,7 @@ const ViewBuildings = () => {
   } = Admin;
   useEffect(() => {
     dispatch(getBuildings());
+    // eslint-disable-next-line
   }, [buildings]);
 
   const onEdit = (building) => {

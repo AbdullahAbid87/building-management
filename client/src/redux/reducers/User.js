@@ -1,4 +1,5 @@
 import {
+  CLEAR_ADD_REQUEST,
   CLEAR_STATE,
   SET_ADD_REQUEST,
   SET_EDIT_REQUEST,
@@ -67,6 +68,12 @@ export default (state = initialState, action) => {
           ...state.addRequestForm,
           [action.payload.name]: action.payload.value,
         },
+      };
+    }
+    case CLEAR_ADD_REQUEST: {
+      return {
+        ...state,
+        addRequestForm: initialState.addRequestForm,
       };
     }
     case SET_SEARCH_REQUEST: {

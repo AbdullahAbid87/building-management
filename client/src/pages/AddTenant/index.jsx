@@ -1,34 +1,23 @@
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
 import {
   Autocomplete,
-  FormControl,
   IconButton,
   InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
 } from "@mui/material";
 import Button from "@mui/material/Button";
-import Switch from "@mui/material/Switch";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../components/Loader";
-import {
-  addBuilding,
-  addManager,
-  getBuildings,
-  setAddManager,
-} from "../../redux/actions/adminAction";
+import { getBuildings } from "../../redux/actions/adminAction";
 import { useNavigate } from "react-router-dom";
-import BuildingType from "../../constants/BuildingType";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   addTenant,
-  getApartments,
+  getAvailableApartments,
   setAddTenant,
 } from "../../redux/actions/managerAction";
 import { isValidEmail } from "../../utils";
@@ -56,8 +45,8 @@ const AddTenant = () => {
   const [errorConfirmPassword, seterrorConfirmPassword] = useState("");
   const [errorEmail, setErrorEmail] = useState("");
 
-  const { addManagerForm, buildings } = Admin;
-  const { addTenantForm, apartments } = Manager;
+  const { buildings } = Admin;
+  const { addTenantForm, availableApartments } = Manager;
   const {
     name,
     email,
@@ -71,7 +60,6 @@ const AddTenant = () => {
   const onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(value);
     dispatch(
       setAddTenant({
         name,
@@ -133,7 +121,8 @@ const AddTenant = () => {
 
   useEffect(() => {
     if (isAdmin) dispatch(getBuildings());
-    dispatch(getApartments());
+    dispatch(getAvailableApartments());
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -172,7 +161,7 @@ const AddTenant = () => {
             <div className="card-form-input">
               <Autocomplete
                 multiple
-                options={apartments}
+                options={availableApartments}
                 getOptionLabel={(option) => option.apartmentTitle}
                 name={"apartment"}
                 renderInput={(params) => (
@@ -184,7 +173,6 @@ const AddTenant = () => {
                   />
                 )}
                 onChange={(event, newValue) => {
-                  console.log(newValue);
                   onChange({
                     target: {
                       name: "apartment",

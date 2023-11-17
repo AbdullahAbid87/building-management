@@ -256,8 +256,6 @@ const getRequests = async ({ userId }) => {
         },
       ]);
     }
-
-    console.log(requests);
     return requests;
   } catch (error) {
     console.log(error);
@@ -359,6 +357,7 @@ const getApartments = async ({ userId }) => {
     throw error;
   }
 };
+
 
 module.exports = {
   loginTenant,

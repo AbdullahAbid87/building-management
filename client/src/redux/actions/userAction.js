@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import {
   BASE_URL,
+  CLEAR_ADD_REQUEST,
   CLEAR_STATE,
   SET_ADD_REQUEST,
   SET_EDIT_REQUEST,
@@ -91,10 +92,36 @@ export const logout =
     dispatch(setLoader(false));
   };
 
+export const loggedInUser =
+  ({ navigate }) =>
+  async (dispatch) => {
+    dispatch(setLoader(true));
+    try {
+      const resp = await Axios.get(`${BASE_URL}/api/tenant/loggedIn`, {
+        withCredentials: true,
+      });
+      const data = resp.data;
+      const currentUser = data.user;
+      dispatch(setUser({ name: "currentUser", value: currentUser }));
+      navigate("/profile");
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch(setLoader(false));
+  };
+
 // Set add Request
 export const setAddRequest = (data) => async (dispatch) => {
   try {
     dispatch({ type: SET_ADD_REQUEST, payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const clearAddRequest = () => async (dispatch) => {
+  try {
+    dispatch({ type: CLEAR_ADD_REQUEST });
   } catch (error) {
     console.log(error);
   }
@@ -127,6 +154,7 @@ export const addRequest =
         showConfirmButton: false,
         timer: 1500,
       });
+      dispatch(clearAddRequest());
     } catch (error) {
       const response = error?.response;
       const data = response?.data;
@@ -185,7 +213,6 @@ export const getRequests = () => async (dispatch) => {
       withCredentials: true,
     });
     const requests = resp.data.requests;
-    console.log(requests);
     dispatch(
       setUser({
         name: "requests",
@@ -317,3 +344,29 @@ export const updateProfile =
     }
     dispatch(setLoader(false));
   };
+
+// Get Apartments
+export const googleLogin = () => async (dispatch) => {
+  // dispatch(setLoader(true));
+  try {
+    const resp = await Axios.get(`${BASE_URL}/api/tenant/success`, {
+      withCredentials: true,
+    });
+    // const resp = await Axios.get(`${BASE_URL}/api/tenant/google/callback`);
+    const data = resp.data;
+    console.log(data);
+  } catch (error) {
+    const response = error?.response;
+    const data = response?.data;
+    const errorMsg = data?.errorMsg;
+    if (errorMsg) {
+      Swal.fire({
+        icon: "error",
+        title: "Error Occured",
+        text: errorMsg,
+      });
+    }
+    console.log(error);
+  }
+  // dispatch(setLoader(false));
+};

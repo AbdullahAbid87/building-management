@@ -16,6 +16,8 @@ const {
   updateProfile,
 } = require("../controllers/tenant");
 const { ObjectId } = mongoose.Types;
+const passport = require("passport");
+const CLIENT_URL = process.env.CLIENT_URL;
 
 //@route    POST api/tenant/login
 //@desc     Login a Tenant
@@ -33,6 +35,18 @@ router.post(
 //@desc     Logout an Admin
 //@access   Public
 router.get("/logout", logoutTenant);
+
+//@route    POST api/tenant/login
+//@desc     Login a Tenant
+//@access   Public
+router.get("/loggedIn", (req, res) => {
+  if (req.user) {
+    const user = req.user;
+    res.json({ user });
+  } else {
+    return res.status(404).json({ errors: "User Not found" });
+  }
+});
 
 //@route    POST api/tenant/addRequest
 //@desc     Add a Request
@@ -119,7 +133,6 @@ router.get("/requests", isAuthTenantOrHigher, async (req, res) => {
     const userIdStr = req.user._id;
     const userId = new ObjectId(userIdStr);
     const requests = await getRequests({ userId });
-    console.log(requests);
     res.json({ requests });
   } catch (error) {
     console.log(error);
@@ -141,5 +154,111 @@ router.get("/apartments", isAuthTenantOrHigher, async (req, res) => {
     res.status(500).json({ errorMsg: error.message });
   }
 });
+
+router.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account",
+  })
+);
+
+router.get("/success", (req, res) => {
+  if (req.user) {
+    res.status(200).json({
+      error: false,
+      message: "Successfully Loged In",
+      user: req.user,
+    });
+  } else {
+    res.status(403).json({ error: true, message: "Not Authorized" });
+  }
+});
+
+router.get("/failed", (req, res) => {
+  res.status(401).json({
+    error: true,
+    message: "Log in failure",
+  });
+});
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: `${CLIENT_URL}?failed=true`,
+  }),
+  async function (req, res) {
+    if (req.user) {
+      const user = req.user;
+      const type = user.type;
+      req.body.email = user.email;
+      if (type === "admin") {
+        passport.authenticate("google-admin", (err, user, info) => {
+          if (err) {
+            return res.status(500).json({ errorMsg: "Server error" });
+          }
+          if (!user) {
+            return res.status(403).json({ errorMsg: "User not found" });
+          }
+          req.logIn(user, (err) => {
+            console.log(err);
+            if (err) {
+              return res.status(500).json({ errorMsg: "Login error" });
+            }
+            return res.redirect(CLIENT_URL);
+          });
+        })(req, res);
+      } else if (type === "manager") {
+        passport.authenticate("google-manager", (err, user, info) => {
+          if (err) {
+            return res.status(500).json({ errorMsg: "Server error" });
+          }
+          if (!user) {
+            return res.status(403).json({ errorMsg: "User not found" });
+          }
+          req.logIn(user, (err) => {
+            console.log(err);
+            if (err) {
+              return res.status(500).json({ errorMsg: "Login error" });
+            }
+            return res.redirect(CLIENT_URL);
+          });
+        })(req, res);
+      } else if (type === "crew") {
+        passport.authenticate("google-crew", (err, user, info) => {
+          if (err) {
+            return res.status(500).json({ errorMsg: "Server error" });
+          }
+          if (!user) {
+            return res.status(403).json({ errorMsg: "User not found" });
+          }
+          req.logIn(user, (err) => {
+            console.log(err);
+            if (err) {
+              return res.status(500).json({ errorMsg: "Login error" });
+            }
+            return res.redirect(CLIENT_URL);
+          });
+        })(req, res);
+      } else if (type === "tenant") {
+        passport.authenticate("google-tenant", (err, user, info) => {
+          if (err) {
+            return res.status(500).json({ errorMsg: "Server error" });
+          }
+          if (!user) {
+            return res.status(403).json({ errorMsg: "User not found" });
+          }
+          req.logIn(user, (err) => {
+            console.log(err);
+            if (err) {
+              return res.status(500).json({ errorMsg: "Login error" });
+            }
+            return res.redirect(CLIENT_URL);
+          });
+        })(req, res);
+      }
+    }
+  }
+);
 
 module.exports = router;

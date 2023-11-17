@@ -1,37 +1,14 @@
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
-import {
-  Autocomplete,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../components/Loader";
-import {
-  addBuilding,
-  addManager,
-  getBuildings,
-  setAddManager,
-} from "../../redux/actions/adminAction";
 import { useNavigate } from "react-router-dom";
-import BuildingType from "../../constants/BuildingType";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import {
-  addRequest,
-  editRequest,
-  setAddRequest,
-  setEditRequest,
-} from "../../redux/actions/userAction";
+import { editRequest, setEditRequest } from "../../redux/actions/userAction";
 import Profession from "../../constants/Profession";
 
 const AddRequest = () => {
@@ -44,7 +21,6 @@ const AddRequest = () => {
   const { editRequestForm, apartments, currentUser } = User;
   const isAdmin = currentUser?.type === "admin";
   const isManager = currentUser?.type === "manager";
-  const isCrew = currentUser?.type === "crew";
   const isTenant = currentUser?.type === "tenant";
   const { category, description, handymen, apartment, status, _id } =
     editRequestForm;
@@ -57,7 +33,6 @@ const AddRequest = () => {
   const onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(value);
     dispatch(
       setEditRequest({
         name,
@@ -89,7 +64,6 @@ const AddRequest = () => {
     }
   };
 
-  useEffect(() => {}, []);
   const isDisabled = !(isAdmin || isManager);
   const isDescDisabled = !(isAdmin || isManager || isTenant);
 

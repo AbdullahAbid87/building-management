@@ -88,6 +88,7 @@ const AddApartment = () => {
 
   useEffect(() => {
     if (isAdmin) dispatch(getBuildings());
+    // eslint-disable-next-line
   }, []);
 
   return (

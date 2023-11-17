@@ -1,55 +1,30 @@
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import Card from "../../components/Card";
-import Table from "../../components/Table";
 import Layout from "../../components/Layout";
-import Avatar from "../../assets/Avatar.jpg";
 import { useEffect } from "react";
 import {
-  getBuildings,
   getManagers,
-  removeBuilding,
   removeManager,
   setAdmin,
-  setSearchBuilding,
   setSearchManager,
 } from "../../redux/actions/adminAction";
 import { useDispatch, useSelector } from "react-redux";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  ButtonBase,
-  Button,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  TextField,
-} from "@mui/material";
+import { ButtonBase, Button, InputAdornment, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Loader from "../../components/Loader";
 import Pagination from "../../components/Pagination";
 import SearchIcon from "@mui/icons-material/Search";
-import styled from "@emotion/styled";
 
 const ViewManagers = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const Admin = useSelector(({ Admin }) => Admin);
   const {
-    buildings,
-    filteredBuildings,
-    paginatedBuildings,
-    currentBuildingPage,
-    totalBuildingPages,
-    buildingPerPage,
-    buildingSearch,
-
-    managers,
     filteredManagers,
     paginatedManagers,
     currentManagerPage,
@@ -60,6 +35,7 @@ const ViewManagers = () => {
 
   useEffect(() => {
     dispatch(getManagers());
+    // eslint-disable-next-line
   }, []);
 
   const onEdit = (manager) => {

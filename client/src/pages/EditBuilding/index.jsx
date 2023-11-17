@@ -1,24 +1,13 @@
-import React, { Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
-import {
-  Autocomplete,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../components/Loader";
-import {
-  addBuilding,
-  editBuilding,
-  setEditBuilding,
-} from "../../redux/actions/adminAction";
+import { editBuilding, setEditBuilding } from "../../redux/actions/adminAction";
 import { useNavigate } from "react-router-dom";
 import BuildingType from "../../constants/BuildingType";
 

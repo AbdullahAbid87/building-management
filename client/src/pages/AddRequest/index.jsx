@@ -1,35 +1,15 @@
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
-import {
-  Autocomplete,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
-import Switch from "@mui/material/Switch";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../components/Loader";
-import {
-  addBuilding,
-  addManager,
-  getBuildings,
-  setAddManager,
-} from "../../redux/actions/adminAction";
 import { useNavigate } from "react-router-dom";
-import BuildingType from "../../constants/BuildingType";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import {
   addRequest,
   getApartments,
-  getRequests,
   setAddRequest,
 } from "../../redux/actions/userAction";
 import Profession from "../../constants/Profession";
@@ -85,6 +65,7 @@ const AddRequest = () => {
 
   useEffect(() => {
     dispatch(getApartments());
+    // eslint-disable-next-line
   }, []);
 
   return (

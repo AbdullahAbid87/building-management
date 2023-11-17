@@ -1,30 +1,14 @@
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
-import {
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
 import Switch from "@mui/material/Switch";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../components/Loader";
-import {
-  addBuilding,
-  addManager,
-  editManager,
-  getBuildings,
-  setAddManager,
-  setEditManager,
-} from "../../redux/actions/adminAction";
+import { getBuildings } from "../../redux/actions/adminAction";
 import { useNavigate } from "react-router-dom";
-import BuildingType from "../../constants/BuildingType";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -146,6 +130,7 @@ const EditTenant = () => {
   useEffect(() => {
     if (isAdmin) dispatch(getBuildings());
     dispatch(getApartments());
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -184,7 +169,13 @@ const EditTenant = () => {
             <div className="card-form-input">
               <Autocomplete
                 multiple
-                options={apartments}
+                options={apartments.filter(
+                  (apartmentOption) =>
+                    !apartment.some(
+                      (selectedApartment) =>
+                        selectedApartment._id === apartmentOption._id
+                    )
+                )}
                 getOptionLabel={(option) => option.apartmentTitle}
                 name={"apartment"}
                 renderInput={(params) => (

@@ -18,6 +18,7 @@ const {
   updateTenant,
   removeTenant,
   getTenants,
+  getAvailableApartments,
 } = require("../controllers/manager");
 const { ObjectId } = mongoose.Types;
 
@@ -300,6 +301,19 @@ router.get("/apartments", isAuthManagerOrHigher, async (req, res) => {
   }
 });
 
+//@route    POST api/manager/availableApartments
+//@desc     Remove a Crew Member
+//@access   Private
+router.get("/availableApartments", isAuthManagerOrHigher, async (req, res) => {
+  try {
+    const apartments = await getAvailableApartments();
+    res.json({ apartments });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ errorMsg: error.message });
+  }
+});
+
 //@route    POST api/manager/addTenant
 //@desc     Add a Tenant
 //@access   Private
@@ -321,7 +335,6 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-      console.log(req.body);
       const { apartmentId, buildingId, name, email, password, phoneNumber } =
         req.body;
       const userIdStr = req.user._id;

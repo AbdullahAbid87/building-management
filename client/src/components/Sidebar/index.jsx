@@ -49,8 +49,11 @@ const Sidebar = () => {
         <span>
           <BusinessIcon />
         </span>
-        RentHaven
-        <div className="dashboard-navbar-menu navbar-sidebar-icon" onClick={toggleSidebar}>
+        KingsCapital
+        <div
+          className="dashboard-navbar-menu navbar-sidebar-icon"
+          onClick={toggleSidebar}
+        >
           <MenuOpenIcon />
         </div>
       </div>

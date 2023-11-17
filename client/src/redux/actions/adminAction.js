@@ -1,5 +1,7 @@
 import {
   BASE_URL,
+  CLEAR_ADD_BUILDING,
+  CLEAR_ADD_MANAGER,
   SET_ADD_BUILDING,
   SET_ADD_MANAGER,
   SET_ADMIN,
@@ -24,6 +26,14 @@ export const setAdmin = (data) => async (dispatch) => {
 export const setAddBuilding = (data) => async (dispatch) => {
   try {
     dispatch({ type: SET_ADD_BUILDING, payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const clearAddBuilding = () => async (dispatch) => {
+  try {
+    dispatch({ type: CLEAR_ADD_BUILDING });
   } catch (error) {
     console.log(error);
   }
@@ -62,6 +72,7 @@ export const addBuilding =
         showConfirmButton: false,
         timer: 1500,
       });
+      dispatch(clearAddBuilding());
     } catch (error) {
       console.log(error);
     }
@@ -146,6 +157,14 @@ export const setAddManager = (data) => async (dispatch) => {
   }
 };
 
+export const clearAddManager = () => async (dispatch) => {
+  try {
+    dispatch({ type: CLEAR_ADD_MANAGER });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const setEditManager = (data) => async (dispatch) => {
   try {
     dispatch({ type: SET_EDIT_MANAGER, payload: data });
@@ -171,6 +190,7 @@ export const addManager =
         showConfirmButton: false,
         timer: 1500,
       });
+      dispatch(clearAddManager());
     } catch (error) {
       const response = error?.response;
       const data = response?.data;

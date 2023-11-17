@@ -1,4 +1,6 @@
 import {
+  CLEAR_ADD_BUILDING,
+  CLEAR_ADD_MANAGER,
   CLEAR_STATE,
   SET_ADD_BUILDING,
   SET_ADD_MANAGER,
@@ -75,6 +77,12 @@ export default (state = initialState, action) => {
         },
       };
     }
+    case CLEAR_ADD_BUILDING: {
+      return {
+        ...state,
+        addBuildingForm: initialState.addBuildingForm,
+      };
+    }
     case SET_EDIT_BUILDING: {
       return {
         ...state,
@@ -106,6 +114,12 @@ export default (state = initialState, action) => {
           ...state.addManagerForm,
           [action.payload.name]: action.payload.value,
         },
+      };
+    }
+    case CLEAR_ADD_MANAGER: {
+      return {
+        ...state,
+        addManagerForm: initialState.addManagerForm,
       };
     }
     case SET_SEARCH_MANAGER: {

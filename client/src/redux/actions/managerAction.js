@@ -1,5 +1,8 @@
 import {
   BASE_URL,
+  CLEAR_ADD_APARTMENT,
+  CLEAR_ADD_CREW,
+  CLEAR_ADD_TENANT,
   SET_ADD_APARTMENT,
   SET_ADD_CREW,
   SET_ADD_TENANT,
@@ -28,6 +31,14 @@ export const setManager = (data) => async (dispatch) => {
 export const setAddApartment = (data) => async (dispatch) => {
   try {
     dispatch({ type: SET_ADD_APARTMENT, payload: data });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const clearAddApartment = () => async (dispatch) => {
+  try {
+    dispatch({ type: CLEAR_ADD_APARTMENT });
   } catch (error) {
     console.log(error);
   }
@@ -76,6 +87,38 @@ export const getApartments = () => async (dispatch) => {
   dispatch(setLoader(false));
 };
 
+export const getAvailableApartments = () => async (dispatch) => {
+  dispatch(setLoader(true));
+  try {
+    const resp = await Axios.get(
+      `${BASE_URL}/api/manager/availableApartments`,
+      {
+        withCredentials: true,
+      }
+    );
+    const apartments = resp.data.apartments;
+    dispatch(
+      setManager({
+        name: "availableApartments",
+        value: apartments,
+      })
+    );
+  } catch (error) {
+    const response = error?.response;
+    const data = response?.data;
+    const errorMsg = data?.errorMsg;
+    if (errorMsg) {
+      Swal.fire({
+        icon: "error",
+        title: "Error Occured",
+        text: errorMsg,
+      });
+    }
+    console.log(error);
+  }
+  dispatch(setLoader(false));
+};
+
 export const addApartment =
   ({ data, navigate }) =>
   async (dispatch) => {
@@ -93,6 +136,7 @@ export const addApartment =
         showConfirmButton: false,
         timer: 1500,
       });
+      dispatch(clearAddApartment());
     } catch (error) {
       const response = error?.response;
       const data = response?.data;
@@ -191,6 +235,14 @@ export const setAddTenant = (data) => async (dispatch) => {
   }
 };
 
+export const clearAddTenant = () => async (dispatch) => {
+  try {
+    dispatch({ type: CLEAR_ADD_TENANT });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const addTenant =
   ({ data, navigate }) =>
   async (dispatch) => {
@@ -208,6 +260,7 @@ export const addTenant =
         showConfirmButton: false,
         timer: 1500,
       });
+      dispatch(clearAddTenant());
     } catch (error) {
       const response = error?.response;
       const data = response?.data;
@@ -348,6 +401,14 @@ export const setAddCrew = (data) => async (dispatch) => {
   }
 };
 
+export const clearAddCrew = () => async (dispatch) => {
+  try {
+    dispatch({ type: CLEAR_ADD_CREW });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const addCrew =
   ({ data, navigate }) =>
   async (dispatch) => {
@@ -365,6 +426,7 @@ export const addCrew =
         showConfirmButton: false,
         timer: 1500,
       });
+      dispatch(clearAddCrew());
     } catch (error) {
       const response = error?.response;
       const data = response?.data;

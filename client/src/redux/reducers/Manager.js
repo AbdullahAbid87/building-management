@@ -1,4 +1,7 @@
 import {
+  CLEAR_ADD_APARTMENT,
+  CLEAR_ADD_CREW,
+  CLEAR_ADD_TENANT,
   CLEAR_STATE,
   SET_ADD_APARTMENT,
   SET_ADD_CREW,
@@ -29,6 +32,7 @@ const initialState = {
     floorLevel: "",
     monthlyRent: "",
   },
+  availableApartments: [],
   apartments: [],
   filteredApartments: [],
   paginatedApartments: [],
@@ -108,6 +112,12 @@ export default (state = initialState, action) => {
         },
       };
     }
+    case CLEAR_ADD_APARTMENT: {
+      return {
+        ...state,
+        addApartmentForm: initialState.addApartmentForm,
+      };
+    }
     case SET_EDIT_APARTMENT: {
       return {
         ...state,
@@ -126,6 +136,12 @@ export default (state = initialState, action) => {
         },
       };
     }
+    case CLEAR_ADD_TENANT: {
+      return {
+        ...state,
+        addTenantForm: initialState.addTenantForm,
+      };
+    }
     case SET_ADD_CREW: {
       return {
         ...state,
@@ -133,6 +149,12 @@ export default (state = initialState, action) => {
           ...state.addCrewForm,
           [action.payload.name]: action.payload.value,
         },
+      };
+    }
+    case CLEAR_ADD_CREW: {
+      return {
+        ...state,
+        addCrewForm: initialState.addCrewForm,
       };
     }
     case SET_EDIT_CREW: {

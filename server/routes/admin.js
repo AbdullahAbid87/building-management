@@ -224,7 +224,6 @@ router.post("/updateManager", isAuthenticatedAdmin, async (req, res) => {
       req.body;
     const userId = new ObjectId(managerId);
     const building_Id = new ObjectId(buildingId);
-    console.log(req.body);
     const manager = await updateManager({
       buildingId: building_Id,
       userId,

@@ -4,10 +4,6 @@ import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
 import {
   Autocomplete,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
 } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -17,7 +13,6 @@ import Loader from "../../components/Loader";
 import { addBuilding, setAddBuilding } from "../../redux/actions/adminAction";
 import { useNavigate } from "react-router-dom";
 import BuildingType from "../../constants/BuildingType";
-import { isNumber } from "../../utils/index";
 import NumberTextField from "../../components/NumberTextField";
 
 const AddBuilding = () => {
@@ -38,10 +33,6 @@ const AddBuilding = () => {
   const onChange = (e) => {
     const name = e.target.name;
     let value = e.target.value;
-    console.log(e.target);
-    if (!isNumber(value)) {
-      return;
-    }
     dispatch(
       setAddBuilding({
         name,

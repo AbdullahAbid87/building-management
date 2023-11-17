@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
@@ -8,9 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getBuildings } from "../../redux/actions/adminAction";
 import {
-  addApartment,
   editApartment,
-  setAddApartment,
   setEditApartment,
 } from "../../redux/actions/managerAction";
 import NumberTextField from "../../components/NumberTextField";
@@ -93,6 +91,7 @@ const EditApartment = () => {
 
   useEffect(() => {
     if (isAdmin) dispatch(getBuildings());
+    // eslint-disable-next-line
   }, []);
 
   return (

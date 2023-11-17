@@ -1,15 +1,11 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import BackgroundImage from "../../assets/profilebackground.jpeg";
 import "./index.css";
 import ProfileImg from "../../assets/profile.jpg";
 import { Button, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setProfileForm,
-  setUser,
-  updateProfile,
-} from "../../redux/actions/userAction";
+import { setProfileForm, updateProfile } from "../../redux/actions/userAction";
 
 const Profile = () => {
   const User = useSelector(({ User }) => User);
@@ -46,6 +42,7 @@ const Profile = () => {
         value: capitalizeFirstLetter(currentUser.type),
       })
     );
+    // eslint-disable-next-line
   }, []);
   const onClick = () => {
     dispatch(
@@ -70,12 +67,12 @@ const Profile = () => {
   return (
     <div className="profile-container">
       <div className="profile-backgroundImage-container">
-        <img src={BackgroundImage} className="profile-backgroundImage" />
+        <img src={BackgroundImage} className="profile-backgroundImage" alt="background.png" />
       </div>
       <div className="profile-card-container">
         <div className="profile-card">
           <div className="profile-info-container">
-            <img src={ProfileImg} className="profile-user-img" />
+            <img src={ProfileImg} className="profile-user-img" alt="profile.png" />
             <div className="profile-info-text-container">
               <div className="profile-info-role">{type}</div>
               <div className="profile-info-desc">Profile Form</div>

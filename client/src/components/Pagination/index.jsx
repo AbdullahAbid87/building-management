@@ -5,7 +5,6 @@ const CustomPagination = ({
   currentPage,
   setCurrentPage,
   items,
-  totalPages,
   setTotalPages,
   itemsPerPage,
   setPaginatedItems,
@@ -23,10 +22,10 @@ const CustomPagination = ({
       const initialPaginatedItems = items.slice(startIndex, endIndex);
       setPaginatedItems(initialPaginatedItems);
     }
+    // eslint-disable-next-line
   }, [items, itemsPerPage, currentPage]);
 
   const handlePageChange = (event, newPage) => {
-    console.log(newPage);
     const startIndex = (newPage - 1) * itemsPerPage;
     const endIndex = Math.min(startIndex + itemsPerPage, items.length);
     const slicedItems = items.slice(startIndex, endIndex);

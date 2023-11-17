@@ -1,25 +1,9 @@
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import Card from "../../components/Card";
-import Table from "../../components/Table";
 import Layout from "../../components/Layout";
-import Avatar from "../../assets/Avatar.jpg";
 import { useEffect } from "react";
-import {
-  getBuildings,
-  getManagers,
-  removeBuilding,
-  removeManager,
-  setSearchBuilding,
-  setSearchManager,
-} from "../../redux/actions/adminAction";
-import {
-  getCrews,
-  getTenants,
-  removeTenant,
-  setSearchCrew,
-  setSearchTenant,
-} from "../../redux/actions/managerAction";
+import { getCrews } from "../../redux/actions/managerAction";
 import {
   getRequests,
   setSearchRequest,
@@ -30,29 +14,18 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {
-  ButtonBase,
-  Button,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  TextField,
-} from "@mui/material";
+import { ButtonBase, Button, InputAdornment, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import Loader from "../../components/Loader";
 import Pagination from "../../components/Pagination";
 import SearchIcon from "@mui/icons-material/Search";
-import styled from "@emotion/styled";
 
 const ViewRequests = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const User = useSelector(({ User }) => User);
   const {
-    requests,
     filteredRequests,
     paginatedRequests,
     currentRequestPage,
@@ -159,6 +132,7 @@ const ViewRequests = () => {
   useEffect(() => {
     dispatch(getRequests());
     if (isAdmin || isManager) dispatch(getCrews());
+    // eslint-disable-next-line
   }, []);
 
   return (

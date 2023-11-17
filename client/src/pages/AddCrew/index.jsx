@@ -1,25 +1,12 @@
-import React, { Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import withDashboard from "../../HOC/withDashboard";
 import FormLayout from "../../components/FormLayout";
 import Card from "../../components/Card";
-import {
-  Autocomplete,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Autocomplete, IconButton, InputAdornment, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
-import Switch from "@mui/material/Switch";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../components/Loader";
-import { addBuilding, setAddBuilding } from "../../redux/actions/adminAction";
 import { useNavigate } from "react-router-dom";
-import BuildingType from "../../constants/BuildingType";
-import Manager from "../../redux/reducers/Manager";
 import { addCrew, setAddCrew } from "../../redux/actions/managerAction";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Visibility from "@mui/icons-material/Visibility";
@@ -62,7 +49,6 @@ const AddCrew = () => {
   const onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    console.log(value);
     dispatch(
       setAddCrew({
         name,
